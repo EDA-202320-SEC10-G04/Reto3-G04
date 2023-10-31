@@ -309,3 +309,36 @@ def sort(data_structs):
     """
     #TODO: Crear función de ordenamiento
     pass
+def getFirstNum(number, tablelist):
+    if number <= lt.size(tablelist):
+        firsts = lt.newList('ARRAY_LIST')
+        for element in range(1, number+1):
+            d = lt.getElement(tablelist, element)
+            lt.addLast(firsts, d)
+        return firsts
+    else:
+        return tablelist
+def getLastNum(number, tablelist):
+    if number <= lt.size(tablelist):
+        last = lt.newList('ARRAY_LIST')
+        for element in range(0,number):
+            d = lt.getElement(tablelist, lt.size(tablelist)-element)
+            lt.addFirst(last, d)
+        return last
+    else:
+        return tablelist
+
+def listFusion(list1, list2):
+    listfusion = lt.newList('ARRAY_LIST')
+    for element in lt.iterator(list1):
+        lt.addLast(listfusion, element)
+    for element in lt.iterator(list2):
+        lt.addLast(listfusion, element)
+    return listfusion
+
+def getnameTeam(tableList,name):
+    nameTeam = lt.newList('ARRAY_LIST')
+    x =lt.compareElements(tableList, name, element)
+    for element in lt.iterator(tableList['home_team']):
+        if name == element:
+            nameTeam.addLast(element)

@@ -31,16 +31,7 @@ from DISClib.DataStructures import mapentry as me
 assert cf
 from tabulate import tabulate
 import traceback
-
-"""
-La vista se encarga de la interacción con el usuario
-Presenta el menu de opciones y por cada seleccion
-se hace la solicitud al controlador para ejecutar la
-operación solicitada
-"""
-temblorfile = 'earthquakes/temblores-utf8.csv'
-cont = None
-
+from prettytable import PrettyTable, ALL
 
 def new_controller():
     """
@@ -48,6 +39,44 @@ def new_controller():
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
     pass
+
+"""
+La vista se encarga de la interacción con el usuario
+Presenta el menu de opciones y por cada seleccion
+se hace la solicitud al controlador para ejecutar la
+operación solicitada
+"""
+cont = None
+
+import sys
+default_limit = 1000
+sys.setrecursionlimit(default_limit*10)
+"""
+La vista se encarga de la interacción con el usuario
+Presenta el menu de opciones y por cada seleccion
+se hace la solicitud al controlador para ejecutar la
+operación solicitada
+"""
+def printSimpleTable(tableList, keys):
+    """
+    Función encargada de mostrar los datos en tablas
+    """
+    table = PrettyTable()
+    table.max_width = 20
+    table.hrules =ALL
+    table.field_names = keys
+    lines = []
+    for element in lt.iterator(tableList):
+        line = []
+        for key in keys:
+            stringE = str(element[key])
+            if len(stringE) > 20:
+                stringE = stringE[:20]
+            line.append(stringE)
+        lines.append(line)
+    table.add_rows(lines)
+    print(table)
+
 
 
 def print_menu():
@@ -170,6 +199,10 @@ if __name__ == "__main__":
             print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
             print('Menor Llave: ' + str(controller.minKey(cont)))
             print('Mayor Llave: ' + str(controller.maxKey(cont)))
+                                    #--------------------MATCH RESULTS ----------------------
+            print("-------------------- TEMBLORES --------------------")
+            sixTemblores =controller.Tendata(cont['temblores'])
+            printSimpleTable(sixTemblores, ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"])
         
         elif int(inputs) == 2:
             print_req_1(control)

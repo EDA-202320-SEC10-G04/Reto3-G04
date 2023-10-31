@@ -204,3 +204,21 @@ def delta_memory(stop_memory, start_memory):
     # de Byte -> kByte
     delta_memory = delta_memory/1024.0
     return delta_memory
+def Tendata(tableList):
+    if model.lt.size(tableList) <=6:
+        return tableList
+    else:
+        firsts = getFirstNum(5, tableList)
+        lasts = getLastNum(5, tableList)
+        return model.listFusion(firsts, lasts)
+def getFirstNum(number, tableList):
+    return model.getFirstNum(number,tableList)
+
+def getLastNum(number,tableList):
+    return model.getLastNum(number,tableList)
+
+def FindTeam(tableList, name):
+    team = model.getnameTeam(tableList,name)
+    
+    return team
+    
