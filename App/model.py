@@ -29,7 +29,7 @@ import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
-from DISClib.ADT import map as mp
+from DISClib.ADT import map as m
 from DISClib.ADT import minpq as mpq
 from DISClib.ADT import indexminpq as impq
 from DISClib.ADT import orderedmap as om
@@ -39,6 +39,7 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+import datetime 
 assert cf
 
 """
@@ -49,14 +50,104 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 # Construccion de modelos
 
 
-def new_data_structs():
-    """
-    Inicializa las estructuras de datos del modelo. Las crea de
-    manera vacía para posteriormente almacenar la información.
-    """
-    #TODO: Inicializar las estructuras de datos
-    pass
 
+
+def newAnalyzer():
+    """ Inicializa el analizador
+
+    Crea una lista vacia para guardar todos los crimenes
+    Se crean indices (Maps) por los siguientes criterios:
+    -Fechas
+
+    Retorna el analizador inicializado.
+    """
+    analyzer = {'temblores': None,
+                'dateIndex': None
+                }
+
+    analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
+    analyzer['dateIndex'] = om.newMap(omaptype='BST',
+                                      cmpfunction=compareDates)
+    return analyzer
+
+
+# Funciones para agregar informacion al catalogo
+
+
+def addTemblor(analyzer, temblor):
+    """
+    funcion que agrega un crimen al catalogo
+    """
+    lt.addLast(analyzer['temblores'], temblor)
+    updateDateIndex(analyzer['dateIndex'], temblor)
+    return analyzer
+
+
+def updateDateIndex(map, temblor):
+    """
+    Se toma la fecha del crimen y se busca si ya existe en el arbol
+    dicha fecha.  Si es asi, se adiciona a su lista de crimenes
+    y se actualiza el indice de tipos de crimenes.
+
+    Si no se encuentra creado un nodo para esa fecha en el arbol
+    se crea y se actualiza el indice de tipos de crimenes
+    """
+    time = temblor['time']
+    temblortime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    entry = om.get(map, temblortime.date())
+    if entry is None:
+        datentry = newDataEntry(temblor)
+        om.put(map, temblortime.date(), datentry)
+    else:
+        datentry = me.getValue(entry)
+    addDateIndex(datentry, temblor)
+    return map
+def addDateIndex(datentry, temblor):
+    lt.addLast(datentry['lsttemblores'], temblor)
+    return datentry
+
+def newDataEntry(temblor):
+    entry = {'lsttemblores': None}
+    entry['lsttemblores'] = lt.newList('SINGLE_LINKED', compareDates)
+    return entry
+
+
+
+def compareIds(id1, id2):
+    """
+    Compara dos crimenes
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+
+def compareDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
+
+
+def compareOffenses(offense1, offense2):
+    """
+    Compara dos tipos de crimenes
+    """
+    offense = me.getKey(offense2)
+    if (offense1 == offense):
+        return 0
+    elif (offense1 > offense):
+        return 1
+    else:
+        return -1
 
 # Funciones para agregar informacion al modelo
 
@@ -87,13 +178,39 @@ def get_data(data_structs, id):
     #TODO: Crear la función para obtener un dato de una lista
     pass
 
+def tembloresSize(analyzer):
+    """
+    Número de crimenes
+    """
+    return lt.size(analyzer['temblores'])
 
-def data_size(data_structs):
+
+def indexHeight(analyzer):
     """
-    Retorna el tamaño de la lista de datos
+    Altura del arbol
     """
-    #TODO: Crear la función para obtener el tamaño de una lista
-    pass
+    return om.height(analyzer['dateIndex'])
+
+
+def indexSize(analyzer):
+    """
+    Numero de elementos en el indice
+    """
+    return om.size(analyzer['dateIndex'])
+
+
+def minKey(analyzer):
+    """
+    Llave mas pequena
+    """
+    return om.minKey(analyzer['dateIndex'])
+
+
+def maxKey(analyzer):
+    """
+    Llave mas grande
+    """
+    return om.maxKey(analyzer['dateIndex'])
 
 
 def req_1(data_structs):

@@ -38,6 +38,8 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
+temblorfile = 'earthquakes/temblores-utf8.csv'
+cont = None
 
 
 def new_controller():
@@ -152,11 +154,23 @@ if __name__ == "__main__":
     working = True
     #ciclo del menu
     while working:
+        cont = controller.init()
+
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
-        if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+
+        sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
+            
+
+        if int(inputs[0]) == 1:
+            print("\nCargando información de crimenes ....")
+            controller.loadData(cont, sample_option)
+            print('Crimenes cargados: ' + str(controller.tembloresSize(cont)))
+            print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+            print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+            print('Menor Llave: ' + str(controller.minKey(cont)))
+            print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        
         elif int(inputs) == 2:
             print_req_1(control)
 

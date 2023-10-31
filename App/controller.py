@@ -31,22 +31,31 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-def new_controller():
+def init():
     """
-    Crea una instancia del modelo
+    Llama la funcion de inicializacion  del modelo.
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    # catalog es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer
 
 
-# Funciones para la carga de datos
+# ___________________________________________________
+#  Funciones para la carga de datos y almacenamiento
+#  de datos en los modelos
+# ___________________________________________________
 
-def load_data(control, filename):
+def loadData(analyzer, sampleoption):
     """
-    Carga los datos del reto
+    Carga los datos de los archivos CSV en el modelo
     """
-    # TODO: Realizar la carga de datos
-    pass
+    temblorfile = cf.data_dir + f'earthquakes/temblores-utf8{sampleoption}.csv'
+    input_file = csv.DictReader(open(temblorfile, encoding="utf-8"),
+                                delimiter=",")
+    for crime in input_file:
+        model.addTemblor(analyzer, crime)
+    return analyzer
+
 
 
 # Funciones de ordenamiento
@@ -61,13 +70,39 @@ def sort(control):
 
 # Funciones de consulta sobre el catálogo
 
-def get_data(control, id):
+def tembloresSize(analyzer):
     """
-    Retorna un dato por su ID.
+    Numero de crimenes leidos
     """
-    #TODO: Llamar la función del modelo para obtener un dato
-    pass
+    return model.tembloresSize(analyzer)
 
+
+def indexHeight(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(analyzer)
+
+
+def indexSize(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(analyzer)
+
+
+def minKey(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey(analyzer)
 
 def req_1(control):
     """
