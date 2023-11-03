@@ -34,6 +34,8 @@ from DISClib.ADT import minpq as mpq
 from DISClib.ADT import indexminpq as impq
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import bst as bst
+from DISClib.DataStructures import bstnode as bstnode
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
@@ -50,8 +52,10 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 # Construccion de modelos
 
 def newCatalog():
-    catalog = {'goals': None,
+    catalog = {'depth': None,
                }
+    catalog['depth'] = bstnode.newNode()
+    
 
     return catalog
 def newAnalyzer():
