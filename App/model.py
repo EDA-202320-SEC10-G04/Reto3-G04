@@ -49,9 +49,11 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 
 # Construccion de modelos
 
+def newCatalog():
+    catalog = {'goals': None,
+               }
 
-
-
+    return catalog
 def newAnalyzer():
     """ Inicializa el analizador
 

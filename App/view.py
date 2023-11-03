@@ -32,13 +32,18 @@ assert cf
 from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
+import model as model
 
 def new_controller():
     """
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+    control ={
+        'model': None
+    }
+    control['model'] = model.newCatalog()
+    return control
 
 """
 La vista se encarga de la interacción con el usuario
@@ -217,6 +222,10 @@ if __name__ == "__main__":
             print_req_4(control)
 
         elif int(inputs) == 6:
+            depth = input("Ingrese la profundidad minima del evento: ")
+            nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
+            
+            answer = controller.req_6(depth,nst, control['model'][''] )
             print_req_5(control)
 
         elif int(inputs) == 7:
