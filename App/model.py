@@ -35,6 +35,8 @@ from DISClib.ADT import indexminpq as impq
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import heap as heap
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import bst as bst
+from DISClib.DataStructures import bstnode as bstnode
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
