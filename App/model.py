@@ -33,6 +33,7 @@ from DISClib.ADT import map as m
 from DISClib.ADT import minpq as mpq
 from DISClib.ADT import indexminpq as impq
 from DISClib.ADT import orderedmap as om
+from DISClib.DataStructures import heap as heap
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import insertionsort as ins
@@ -49,11 +50,7 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 
 # Construccion de modelos
 
-def newCatalog():
-    catalog = {'goals': None,
-               }
 
-    return catalog
 def newAnalyzer():
     """ Inicializa el analizador
 
@@ -70,6 +67,9 @@ def newAnalyzer():
     analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
+
+    analyzer['depth'] = om.newMap(omaptype='BST',
+                                      cmpfunction=compareDates)
     return analyzer
 
 
@@ -82,6 +82,7 @@ def addTemblor(analyzer, temblor):
     """
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
+    updateDepth(analyzer['depth'],temblor)
     return analyzer
 
 
@@ -104,6 +105,34 @@ def updateDateIndex(map, temblor):
         datentry = me.getValue(entry)
     addDateIndex(datentry, temblor)
     return map
+
+def updateDepth(map, temblor):
+    time = temblor['time']
+    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    exist = om.get(map,temblor['depth'] )
+    if exist is None:
+        entry = newData(temblor)
+        om.put(map,temblor['depth'], entry)
+    else:
+        entry = me.getValue(exist)
+    addDepth(entry, temblor)
+    return map
+
+def addDepth(entry,temblor):
+    
+    mainValue ={
+    }
+    value = lt.newList('ARRAY_LIST')
+    lt.addLast(value,temblor)
+    mainValue[temblor['time']] = value
+    
+    heap.insert(entry['lstTemblores'], mainValue)
+    return entry
+
+def newData(temblor):
+    entry = {'lstTemblores': None}
+    entry['lstTemblores'] = heap.newHeap(compare_dicts)
+    return entry
 def addDateIndex(datentry, temblor):
     lt.addLast(datentry['lsttemblores'], temblor)
     return datentry
@@ -113,15 +142,25 @@ def newDataEntry(temblor):
     entry['lsttemblores'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
+def compare_dicts(dict1, dict2):
+    """
+    Compara dos diccionarios basándose en la clave 'id'
+    """
+    if dict1.get('time', "unknown") == dict2.get('time', "unknown"):
+        return 0
+    elif dict1.get('time', "unknown") > dict2.get('time', "unknown"):
+        return 1
+    else:
+        return -1
 
 
 def compareIds(id1, id2):
     """
     Compara dos crimenes
     """
-    if (id1 == id2):
+    if (id1.key() == id2.key()):
         return 0
-    elif id1 > id2:
+    elif id1.key() > id2.key():
         return 1
     else:
         return -1

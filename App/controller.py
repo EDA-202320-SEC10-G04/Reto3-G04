@@ -143,12 +143,13 @@ def req_5(control):
     # TODO: Modificar el requerimiento 5
     pass
 
-def req_6(control):
+def req_6(depth,nst, data_structs):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
-    pass
+    answer = model.req_6(depth,nst,data_structs)
+    return answer
 
 
 def req_7(control):
