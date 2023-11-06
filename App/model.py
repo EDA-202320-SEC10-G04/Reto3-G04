@@ -70,8 +70,7 @@ def newAnalyzer():
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
 
-    analyzer['depth'] = om.newMap(omaptype='BST',
-                                      cmpfunction=compareDates)
+    analyzer['depth'] = om.newMap(omaptype='BST')
     return analyzer
 
 
@@ -111,10 +110,10 @@ def updateDateIndex(map, temblor):
 def updateDepth(map, temblor):
     time = temblor['time']
     temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    exist = om.get(map,temblor['depth'] )
+    exist = om.get(map,float (temblor['depth']) )
     if exist is None:
         entry = newData(temblor)
-        om.put(map,temblor['depth'], entry)
+        om.put(map,float(temblor['depth']), entry)
     else:
         entry = me.getValue(exist)
     addDepth(entry, temblor)
@@ -128,12 +127,11 @@ def addDepth(entry,temblor):
     lt.addLast(value,temblor)
     mainValue[temblor['time']] = value
     
-    heap.insert(entry['lstTemblores'], mainValue)
+    heap.insert(entry, mainValue)
     return entry
 
 def newData(temblor):
-    entry = {'lstTemblores': None}
-    entry['lstTemblores'] = heap.newHeap(compare_dicts)
+    entry = heap.newHeap(compare_dicts)
     return entry
 def addDateIndex(datentry, temblor):
     lt.addLast(datentry['lsttemblores'], temblor)
@@ -296,13 +294,14 @@ def req_5(data_structs):
     pass
 
 
-def req_6(data_structs):
+def req_6(depth,nst,data_structs):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
-
+    z = data_structs
+    x = om.get(data_structs,depth)
+    f= 'hola'
 
 def req_7(data_structs):
     """

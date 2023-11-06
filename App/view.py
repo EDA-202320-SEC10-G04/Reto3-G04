@@ -193,10 +193,11 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
 
-        sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
+        
             
 
         if int(inputs[0]) == 1:
+            sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
             print("\nCargando información de crimenes ....")
             controller.loadData(cont, sample_option)
             print('Crimenes cargados: ' + str(controller.tembloresSize(cont)))
@@ -222,7 +223,7 @@ if __name__ == "__main__":
             print_req_4(control)
 
         elif int(inputs) == 6:
-            depth = input("Ingrese la profundidad minima del evento: ")
+            depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
             answer = controller.req_6(depth,nst, control['model']['depth'] )
