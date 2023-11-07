@@ -125,7 +125,10 @@ def addDepth(entry,temblor):
     }
     value = lt.newList('ARRAY_LIST')
     lt.addLast(value,temblor)
-    mainValue[temblor['time']] = value
+    if len (temblor['nst']) ==0: 
+        mainValue[0] = value
+    else:
+        mainValue[float(temblor['nst'])] = value
     
     heap.insert(entry, mainValue)
     return entry
@@ -301,6 +304,10 @@ def req_6(depth,nst,analyzer):
     # TODO: Realizar el requerimiento 6
     data_structs = analyzer['depth']
     x = om.get(data_structs,depth)
+   
+
+    z = om.values(x, nst, nst+5)
+   
     f= 'hola'
 
 def req_7(data_structs):

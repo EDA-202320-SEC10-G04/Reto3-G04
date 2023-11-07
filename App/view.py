@@ -187,8 +187,9 @@ if __name__ == "__main__":
     """
     working = True
     #ciclo del menu
+    cont = controller.init()
     while working:
-        cont = controller.init()
+        
 
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
@@ -223,6 +224,7 @@ if __name__ == "__main__":
             print_req_4(control)
 
         elif int(inputs) == 6:
+            z = cont
             depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
