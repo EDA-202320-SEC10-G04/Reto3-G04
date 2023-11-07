@@ -226,7 +226,7 @@ if __name__ == "__main__":
             depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
-            answer = controller.req_6(depth,nst, control['model']['depth'] )
+            answer = controller.req_6(depth,nst, cont)
             print_req_5(control)
 
         elif int(inputs) == 7:

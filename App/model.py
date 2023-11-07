@@ -294,12 +294,12 @@ def req_5(data_structs):
     pass
 
 
-def req_6(depth,nst,data_structs):
+def req_6(depth,nst,analyzer):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    z = data_structs
+    data_structs = analyzer['depth']
     x = om.get(data_structs,depth)
     f= 'hola'
 
