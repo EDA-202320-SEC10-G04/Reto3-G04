@@ -103,13 +103,13 @@ def updateDateIndex(map, temblor):
         datentry = me.getValue(entry)
     addDateIndex(datentry, temblor)
     return map
+
 def addDateIndex(datentry, temblor):
-    lt.addLast(datentry['lsttemblores'], temblor)
+    lt.addLast(datentry, temblor)
     return datentry
 
 def newDataEntry(temblor):
-    entry = {'lsttemblores': None}
-    entry['lsttemblores'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
 
@@ -226,24 +226,25 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     keys = om.keys(analyzer, initialDate, finalDate)
     totearthquakes = lt.size(lst)
     print(lst)
-    """events = 0
+    events = 0
     for lstdate in lt.iterator(lst):
-        events += 1
-        time = lstdate['time']
-        detalles.addLast(lstdate)
-        if time in dict:
+        for j in lt.iterator(lstdate):
             events += 1
-        dict[time] = {
-            'time':time,
-            'events':events,
-            'details':detalles
-            
-        }
-        lt.addLast(final,dict[time])
+            time = j['time']
+            detalles.addLast(j)
+            if time in dict:
+                events += 1
+            dict[time] = {
+                'time':time,
+                'events':events,
+                'details':detalles
+                
+            }
+            lt.addLast(final,dict[time])
         
     
         
-    return totearthquakes, detalles, events"""
+    return totearthquakes, detalles, events
 
 
 def req_2(data_structs):

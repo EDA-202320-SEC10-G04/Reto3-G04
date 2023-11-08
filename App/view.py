@@ -237,6 +237,7 @@ if __name__ == "__main__":
     """
     working = True
     #ciclo del menu
+    cont = controller.init()
     while working:
         
 
@@ -250,7 +251,7 @@ if __name__ == "__main__":
         if int(inputs) == 1:
             sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
             print("\nCargando información de crimenes ....")
-            cont = controller.init()
+            
             controller.loadData(cont, sample_option)
             print('Crimenes cargados: ' + str(controller.tembloresSize(cont)))
             print('Altura del arbol: ' + str(controller.indexHeight(cont)))
@@ -260,7 +261,7 @@ if __name__ == "__main__":
                                     #--------------------MATCH RESULTS ----------------------
             print("-------------------- TEMBLORES --------------------")
             sixTemblores =controller.Tendata(cont['temblores'])
-            print(cont['dateIndex'])
+            
             
             printSimpleTable(sixTemblores, ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"])
                     
@@ -270,6 +271,7 @@ if __name__ == "__main__":
                 fin  = input("Ingrese la fecha final: ")
                 
                 print("========================= Req No.1 Results ==================")
+                f = cont
                 time, totearthquakes, detalles, events = controller.getDatesByRange(cont['dateIndex'], ini, fin)
                 
                 print(" delta tiempo fue:", str(time))
