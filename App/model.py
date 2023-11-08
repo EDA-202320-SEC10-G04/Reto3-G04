@@ -220,31 +220,32 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     """
     detalles = lt.newList('ARRAY_LIST')
     final = lt.newList('ARRAY_LIST')
+    dic = {}
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%dT%H:%M')
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%dT%H:%M') 
     lst = om.values(analyzer, initialDate, finalDate)
     keys = om.keys(analyzer, initialDate, finalDate)
     totearthquakes = lt.size(lst)
-    print(lst)
+    
     events = 0
     for lstdate in lt.iterator(lst):
         for j in lt.iterator(lstdate):
-            events += 1
+            
             time = j['time']
-            detalles.addLast(j)
-            if time in dict:
-                events += 1
-            dict[time] = {
+            
+            
+            events += 1
+            dic[time] = {
                 'time':time,
-                'events':events,
-                'details':detalles
+                'events':1,
+                'details':j
                 
             }
-            lt.addLast(final,dict[time])
+            lt.addFirst(final,dic[time])
         
     
         
-    return totearthquakes, detalles, events
+    return totearthquakes, final, events
 
 
 def req_2(data_structs):
