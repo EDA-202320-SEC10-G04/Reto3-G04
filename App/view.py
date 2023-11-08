@@ -260,7 +260,7 @@ if __name__ == "__main__":
                                     #--------------------MATCH RESULTS ----------------------
             print("-------------------- TEMBLORES --------------------")
             sixTemblores =controller.Tendata(cont['temblores'])
-            print(cont['dateIndex'])
+            
             
             printSimpleTable(sixTemblores, ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"])
                     

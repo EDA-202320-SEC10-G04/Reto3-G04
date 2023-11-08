@@ -226,7 +226,7 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     keys = om.keys(analyzer, initialDate, finalDate)
     totearthquakes = lt.size(lst)
     print(lst)
-    """events = 0
+    events = 0
     for lstdate in lt.iterator(lst):
         events += 1
         time = lstdate['time']
@@ -243,7 +243,7 @@ def getDatesByRange(analyzer, initialDate, finalDate):
         
     
         
-    return totearthquakes, detalles, events"""
+    return totearthquakes, detalles, events
 
 
 def req_2(data_structs):
