@@ -103,14 +103,15 @@ def maxKey(analyzer):
     La mayor llave del arbol
     """
     return model.maxKey(analyzer)
-
-def req_1(control):
-    """
-    Retorna el resultado del requerimiento 1
-    """
-    # TODO: Modificar el requerimiento 1
-    pass
-
+def getDatesByRange(analyzer, ini, fin):
+    "Retorna los goles totales de un jugador, y los últimos n goles"
+    
+    start_time = get_time()
+    totearthquakes, detalles, events = model.getDatesByRange(analyzer, ini, fin)
+    end_time = get_time()
+    
+    deltatime = delta_time(start_time, end_time)
+    return deltatime,  totearthquakes, detalles, events
 
 def req_2(control):
     """
@@ -128,12 +129,16 @@ def req_3(control):
     pass
 
 
-def req_4(control):
-    """
-    Retorna el resultado del requerimiento 4
-    """
-    # TODO: Modificar el requerimiento 4
-    pass
+def req_4(sig_min, gap_max,analyzer):
+    
+    start_time = get_time()
+   
+
+    size, result = model.consultar_15_eventos_sismicos(sig_min, gap_max, analyzer)
+
+    end_time = get_time()
+    deltatime = delta_time(end_time, start_time)
+    return size, result, deltatime
 
 
 def req_5(control):
@@ -222,3 +227,21 @@ def FindTeam(tableList, name):
     
     return team
     
+
+def sixdata(tableList):
+    if model.lt.size(tableList) <=6:
+        return tableList
+    else:
+        firsts = getFirstNum(3, tableList)
+        lasts = getLastNum(3, tableList)
+        return model.listFusion(firsts, lasts)
+def getFirstNum(number, tableList):
+    return model.getFirstNum(number,tableList)
+
+def getLastNum(number,tableList):
+    return model.getLastNum(number,tableList)
+
+def FindTeam(tableList, name):
+    team = model.getnameTeam(tableList,name)
+    
+    return team

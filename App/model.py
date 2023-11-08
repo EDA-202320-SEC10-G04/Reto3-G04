@@ -34,6 +34,7 @@ from DISClib.ADT import minpq as mpq
 from DISClib.ADT import indexminpq as impq
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import rbt as rbt
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
@@ -94,10 +95,10 @@ def updateDateIndex(map, temblor):
     """
     time = temblor['time']
     temblortime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    entry = om.get(map, temblortime.date())
+    entry = om.get(map, temblortime)
     if entry is None:
         datentry = newDataEntry(temblor)
-        om.put(map, temblortime.date(), datentry)
+        om.put(map, temblortime, datentry)
     else:
         datentry = me.getValue(entry)
     addDateIndex(datentry, temblor)
@@ -213,12 +214,36 @@ def maxKey(analyzer):
     return om.maxKey(analyzer['dateIndex'])
 
 
-def req_1(data_structs):
+def getDatesByRange(analyzer, initialDate, finalDate):
     """
-    Función que soluciona el requerimiento 1
+    Retorna el numero de crimenes en un rago de fechas.
     """
-    # TODO: Realizar el requerimiento 1
-    pass
+    detalles = lt.newList('ARRAY_LIST')
+    final = lt.newList('ARRAY_LIST')
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%dT%H:%M')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%dT%H:%M') 
+    lst = om.values(analyzer, initialDate, finalDate)
+    keys = om.keys(analyzer, initialDate, finalDate)
+    totearthquakes = lt.size(lst)
+    print(lst)
+    """events = 0
+    for lstdate in lt.iterator(lst):
+        events += 1
+        time = lstdate['time']
+        detalles.addLast(lstdate)
+        if time in dict:
+            events += 1
+        dict[time] = {
+            'time':time,
+            'events':events,
+            'details':detalles
+            
+        }
+        lt.addLast(final,dict[time])
+        
+    
+        
+    return totearthquakes, detalles, events"""
 
 
 def req_2(data_structs):
@@ -237,12 +262,35 @@ def req_3(data_structs):
     pass
 
 
-def req_4(data_structs):
-    """
-    Función que soluciona el requerimiento 4
-    """
-    # TODO: Realizar el requerimiento 4
-    pass
+# Función recursiva para realizar un recorrido in-order en el árbol RBT
+def in_order_traversal(node, sig_min, gap_max, result):
+    if node is not None:
+        in_order_traversal(node['left'], sig_min, gap_max, result)
+
+        event = node['value']['lsttemblores']['first']['info']
+        if event['sig']:
+         sig = float(event['sig'])
+        cmp_sig = float(sig_min) - sig
+        if event['gap']:
+            cmp_gap = float(gap_max) - float(event['gap'])
+        
+        if cmp_sig <= 0 and cmp_gap >= 0:
+            lt.addLast(result, event)
+
+        in_order_traversal(node['right'], sig_min, gap_max, result)
+
+
+# Función para consultar los 15 eventos sísmicos más recientes
+def consultar_15_eventos_sismicos(sig_min, gap_max, data_structs):
+    result = lt.newList()
+
+    in_order_traversal(data_structs['dateIndex']['root'], sig_min, gap_max, result)
+    size = lt.size(result)
+    
+
+    return size, result
+
+
 
 
 def req_5(data_structs):
