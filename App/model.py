@@ -121,20 +121,22 @@ def updateDepth(map, temblor):
 
 def addDepth(entry,temblor):
     
-    mainValue ={
-    }
     value = lt.newList('ARRAY_LIST')
-    lt.addLast(value,temblor)
-    if len (temblor['nst']) ==0: 
-        mainValue[0] = value
+    if len(temblor['nst']) ==0: 
+        nst = 0
+        lt.addLast(value,temblor)
+        dic[nst] = value
+
     else:
-        mainValue[float(temblor['nst'])] = value
+        nst = float(temblor['nst'])
+        dic[nst] = value
+        lt.addLast(value,temblor)
     
-    heap.insert(entry, mainValue)
+    om.put(entry, nst, value)
     return entry
 
 def newData(temblor):
-    entry = heap.newHeap(compare_dicts)
+    entry = om.newMap(omaptype='RBT') 
     return entry
 def addDateIndex(datentry, temblor):
     lt.addLast(datentry['lsttemblores'], temblor)
@@ -304,9 +306,11 @@ def req_6(depth,nst,analyzer):
     # TODO: Realizar el requerimiento 6
     data_structs = analyzer['depth']
     x = om.get(data_structs,depth)
-   
+    r = x['value']
 
-    z = om.values(x, nst, nst+5)
+    f = om.get(r,nst)
+
+        
    
     f= 'hola'
 
