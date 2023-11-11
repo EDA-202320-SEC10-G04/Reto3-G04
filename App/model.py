@@ -120,20 +120,23 @@ def updateDepth(map, temblor):
     return map
 
 def addDepth(entry,temblor):
-    
-    value = lt.newList('ARRAY_LIST')
+    value = om.newMap(omaptype="RBT")
     if len(temblor['nst']) ==0: 
         nst = 0
-        lt.addLast(value,temblor)
-        dic[nst] = value
-
     else:
         nst = float(temblor['nst'])
-        dic[nst] = value
-        lt.addLast(value,temblor)
-    
-    om.put(entry, nst, value)
+        
+    exist = om.get(value,nst )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,nst, entry)
+    else:
+        entry = me.getValue(exist)
+    lt.addLast(entry, temblor)
     return entry
+def newlist(temblor):
+    newList= lt.newList(datastructure='ARRAY_LIST')
+    return newList
 
 def newData(temblor):
     entry = om.newMap(omaptype='RBT') 
