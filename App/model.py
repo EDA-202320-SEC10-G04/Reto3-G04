@@ -322,7 +322,10 @@ def req_6(depth,nst,analyzer):
     # TODO: Realizar el requerimiento 6
     data_structs = analyzer['depth']
     x = om.values(data_structs,depth, om.maxKey(data_structs))
-    f = om.values(x,nst,om.maxKey(x))
+    for i in lt.iterator(x):
+        f = om.values(i,nst,om.maxKey(i))
+    
+    
    
     f= 'hola'
 
