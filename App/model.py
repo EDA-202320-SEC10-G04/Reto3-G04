@@ -119,7 +119,7 @@ def updateDepth(map, temblor):
     addDepth(entry, temblor)
     return map
 
-def addDepth(entry,temblor):
+def addDepth(map,temblor):
     value = om.newMap(omaptype="RBT")
     if len(temblor['nst']) ==0: 
         nst = 0
@@ -132,8 +132,21 @@ def addDepth(entry,temblor):
         om.put(value,nst, entry)
     else:
         entry = me.getValue(exist)
-    lt.addLast(entry, temblor)
-    return entry
+    addNst(value, temblor, nst)
+    om.put(map,float(temblor['depth']),value)
+    return map
+
+def addNst(value, temblor, nst):
+    newList = om.get(value, nst)
+    valor = me.getValue(newList)
+    
+    lt.addLast(valor, temblor)
+    
+    om.put(value, nst, valor)
+    return value
+    
+
+
 def newlist(temblor):
     newList= lt.newList(datastructure='ARRAY_LIST')
     return newList
@@ -308,12 +321,8 @@ def req_6(depth,nst,analyzer):
     """
     # TODO: Realizar el requerimiento 6
     data_structs = analyzer['depth']
-    x = om.get(data_structs,depth)
-    r = x['value']
-
-    f = om.get(r,nst)
-
-        
+    x = om.values(data_structs,depth, om.maxKey(data_structs))
+    f = om.values(x,nst,om.maxKey(x))
    
     f= 'hola'
 
