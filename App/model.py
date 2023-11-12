@@ -112,15 +112,16 @@ def updateDepth(map, temblor):
     temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
     exist = om.get(map,float (temblor['depth']) )
     if exist is None:
-        entry = newData(temblor)
-        om.put(map,float(temblor['depth']), entry)
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['depth']), value)
     else:
-        entry = me.getValue(exist)
-    addDepth(entry, temblor)
+        value = me.getValue(exist)
+    addDepth(map, temblor,value)
     return map
 
-def addDepth(map,temblor):
-    value = om.newMap(omaptype="RBT")
+
+def addDepth(map,temblor, value):
+    
     if len(temblor['nst']) ==0: 
         nst = 0
     else:
@@ -139,9 +140,7 @@ def addDepth(map,temblor):
 def addNst(value, temblor, nst):
     newList = om.get(value, nst)
     valor = me.getValue(newList)
-    
     lt.addLast(valor, temblor)
-    
     om.put(value, nst, valor)
     return value
     
@@ -320,11 +319,19 @@ def req_6(depth,nst,analyzer):
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
+    newLista = lt.newList()
     data_structs = analyzer['depth']
     x = om.values(data_structs,depth, om.maxKey(data_structs))
     for i in lt.iterator(x):
+        a =i['root']['value']
+        b = i['root']
         f = om.values(i,nst,om.maxKey(i))
-    
+        working = True
+        while i < 20:
+            v = lt.getElement(f,i)
+            lt.addLast(newLista,v)
+
+    return newLista
     
    
     f= 'hola'

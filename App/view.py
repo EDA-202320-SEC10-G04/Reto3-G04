@@ -150,7 +150,8 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    keys = ['mag','lat', 'long', 'depth','sig', 'gap','nst','title','cdi', 'mmi','magType','type','code']
+    PrettyTable(control,keys)
 
 
 def print_req_6(control):
@@ -229,7 +230,7 @@ if __name__ == "__main__":
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
             answer = controller.req_6(depth,nst, cont)
-            print_req_5(control)
+            print_req_5(answer)
 
         elif int(inputs) == 7:
             print_req_6(control)
