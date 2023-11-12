@@ -108,8 +108,7 @@ def updateDateIndex(map, temblor):
     return map
 
 def updateDepth(map, temblor):
-    time = temblor['time']
-    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    
     exist = om.get(map,float (temblor['depth']) )
     if exist is None:
         value = om.newMap(omaptype="RBT")
@@ -138,6 +137,9 @@ def addDepth(map,temblor, value):
     return map
 
 def addNst(value, temblor, nst):
+    time = temblor['time']
+    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    temblor['time'] = temblorTime
     newList = om.get(value, nst)
     valor = me.getValue(newList)
     lt.addLast(valor, temblor)
@@ -189,6 +191,7 @@ def compareIds(id1, id2):
 def compareDates(date1, date2):
     """
     Compara dos fechas
+    
     """
     if (date1 == date2):
         return 0
@@ -329,9 +332,9 @@ def req_6(depth,nst,analyzer):
         for j in lt.iterator(f):
             for z in j['elements']:
                 lt.addLast(newLista,z)
-                if lt.size(newLista)==20:
-                    return newLista
-            
+    se.sort(newLista,compareDates2)
+    f= newLista
+    return newLista
 
 def req_7(data_structs):
     """
@@ -361,18 +364,21 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def sort_criteria(data_1, data_2):
-    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
 
-    Args:
-        data1 (_type_): _description_
-        data2 (_type_): _description_
-
-    Returns:
-        _type_: _description_
+def compareDates2(tem1, tem2):
     """
-    #TODO: Crear función comparadora para ordenar
-    pass
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    if (date1 == date2):
+        return 0
+    elif (date1 < date2):
+        return 1
+    else:
+        return -1
 
 
 def sort(data_structs):

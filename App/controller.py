@@ -205,6 +205,13 @@ def delta_memory(stop_memory, start_memory):
     # de Byte -> kByte
     delta_memory = delta_memory/1024.0
     return delta_memory
+def sixdata(tableList):
+    if model.lt.size(tableList) <6:
+        return tableList
+    else:
+        firsts = getFirstNum(3, tableList)
+        lasts = getLastNum(3, tableList)
+        return model.listFusion(firsts, lasts)
 def Tendata(tableList):
     if model.lt.size(tableList) <=6:
         return tableList
