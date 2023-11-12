@@ -322,12 +322,11 @@ def req_6(depth,nst,analyzer):
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    newLista = lt.newList()
+    newLista = lt.newList('SINGLE_LINKED')
     data_structs = analyzer['depth']
     x = om.values(data_structs,depth, om.maxKey(data_structs))
     for i in lt.iterator(x):
-        a =i['root']['value']
-        b = i['root']
+       
         f = om.values(i,nst,om.maxKey(i))
         for j in lt.iterator(f):
             for z in j['elements']:
@@ -373,12 +372,27 @@ def compareDates2(tem1, tem2):
     date1 = tem1['time']
     date2 = tem2['time']
     
-    if (date1 == date2):
-        return 0
-    elif (date1 < date2):
-        return 1
-    else:
-        return -1
+    profundidad1 = tem1['depth']
+    profundidad2 = tem2['depth']
+
+    nst1 = tem1['nst']
+    nst2 = tem2['nst']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if profundidad1 <  profundidad2:
+            return False
+        elif profundidad1 > profundidad2:
+            return True
+        else:
+            if nst1 <  nst2:
+                return False
+            elif nst1 > nst2:
+                return True
 
 
 def sort(data_structs):
