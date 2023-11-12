@@ -326,15 +326,11 @@ def req_6(depth,nst,analyzer):
         a =i['root']['value']
         b = i['root']
         f = om.values(i,nst,om.maxKey(i))
-        working = True
-        while i < 20:
-            v = lt.getElement(f,i)
-            lt.addLast(newLista,v)
-
-    return newLista
-    
-   
-    f= 'hola'
+        for j in lt.iterator(f):
+            lt.addLast(newLista,j)
+            if lt.size(newLista)==20:
+                return newLista
+            
 
 def req_7(data_structs):
     """

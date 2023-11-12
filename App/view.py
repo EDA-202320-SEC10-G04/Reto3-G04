@@ -150,8 +150,9 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
+    f = control
     keys = ['mag','lat', 'long', 'depth','sig', 'gap','nst','title','cdi', 'mmi','magType','type','code']
-    PrettyTable(control,keys)
+    printSimpleTable(control,keys)
 
 
 def print_req_6(control):
