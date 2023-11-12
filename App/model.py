@@ -327,9 +327,10 @@ def req_6(depth,nst,analyzer):
         b = i['root']
         f = om.values(i,nst,om.maxKey(i))
         for j in lt.iterator(f):
-            lt.addLast(newLista,j)
-            if lt.size(newLista)==20:
-                return newLista
+            for z in j['elements']:
+                lt.addLast(newLista,z)
+                if lt.size(newLista)==20:
+                    return newLista
             
 
 def req_7(data_structs):
