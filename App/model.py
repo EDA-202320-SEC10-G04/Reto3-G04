@@ -88,7 +88,7 @@ def addTemblor(analyzer, temblor):
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
-    updateYear(analyzer['year'],temblor )
+
     return analyzer
 
 
@@ -147,38 +147,6 @@ def newDataEntry(temblor):
     entry = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
-def updateYear(map, temblor):
-    
-    exist = om.get(map,float (temblor['year']) )
-    if exist is None:
-        value = om.newMap(omaptype="RBT")
-        om.put(map,float(temblor['year']), value)
-    else:
-        value = me.getValue(exist)
-    addD(map, temblor,value)
-    return map
-
-
-def addD(map,temblor, value):
-        
-    exist = om.get(value,nst )
-    if exist is None:
-        entry = newlist(temblor)
-        om.put(value,nst, entry)
-    else:
-        entry = me.getValue(exist)
-    addSig(value, temblor, nst)
-    om.put(map,float(temblor['depth']),value)
-    return map
-
-def addSig(value, temblor, nst):
-    
-    newList = om.get(value, nst)
-    valor = me.getValue(newList)
-    lt.addLast(valor, temblor)
-    om.put(value, nst, valor)
-    return value
-    
 
 
 def newlist(temblor):
