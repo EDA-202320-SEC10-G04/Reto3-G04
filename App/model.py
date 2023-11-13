@@ -408,7 +408,7 @@ def req_6(year,lat,lon,radio, data_structs):
     i= 0
     while work and i<last_p:
         lt.addLast(array2, i)
-    
+    return array2
 
 def req_7(data_structs):
     """
@@ -504,10 +504,23 @@ def getdistance(lon1, lat1, lon2, lat2):
 def sortDistance(temblor1, temblor2):
     distance1 = temblor1['distancia']
     distance2 = temblor2['distancia']
-    if (distance1 > distance2):
-        return True
-    else:
+    
+    sig1 = temblor1['sig']
+    sig2 = temblor2['sig']
+    if distance1 < distance2:
         return False
+    elif distance1 > distance2:
+        return True
+    else:        
+        if sig1 <  sig2:
+            return False
+        elif sig1 > sig2:
+            return True
+       
+
+
+
+
     
 def searchnameBinary(data, goal):
     low, high = 0 , lt.size(data)

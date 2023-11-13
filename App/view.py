@@ -213,7 +213,10 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    x  = controller.sixdata(control)
+    keys =  ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"]
+
+    printSimpleTable(x,keys)
 
 
 def print_req_7(control):
@@ -308,9 +311,9 @@ if __name__ == "__main__":
 
         elif int(inputs) == 7:
             year = int(input("Ingrese el año relevante: "))
-            lat = int(input("Ingrese la Latitud de referencia para el área de eventos: "))
-            lon = int(input("Ingrese la longitud de referencia para el área de eventos "))
-            radio = int(input("Ingrese el radio [km] del área circundante "))
+            lat = float(input("Ingrese la Latitud de referencia para el área de eventos: "))
+            lon = float(input("Ingrese la longitud de referencia para el área de eventos "))
+            radio = (input("Ingrese el radio [km] del área circundante "))
             n = int(input("Ingrese el número de los N eventos de magnitud más cercana a mostrar.: "))
             
             
