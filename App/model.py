@@ -94,72 +94,42 @@ def addTemblor(analyzer, temblor):
     return analyzer
 
 def updateYear(map, temblor):
-    """
-    Actualiza el índice por años con los temblores.
-    """
-    temblortime = temblor['time']
-    entry = om.get(map, temblortime.date())
-    if entry is None:
-        datentry = newYear(temblor)
-        om.put(map, temblortime.date(), datentry)
+    
+    exist = om.get(map, (temblor['time'].date()) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,temblor['time'].date(), value)
     else:
-        datentry = me.getValue(entry)
-    addYear(datentry, temblor)
+        value = me.getValue(exist)
+    addYear(map, temblor,value)
     return map
-def extract_region(place):
-    """
-    Función para extraer la región deseada de la cadena del título del temblor.
-    """
-    parts = place.split(",")  # Separar la cadena por comas
-    if len(parts) > 1:
-        region = parts[1].strip()  # Tomar la segunda parte y eliminar espacios adicionales
-        return region
-    return place 
 
-def addYear(datentry, temblor):
-    """
-    Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
-    de crimenes y una tabla de hash cuya llave es el tipo de crimen y
-    el valor es una lista con los crimenes de dicho tipo en la fecha que
-    se está consultando (dada por el nodo del arbol)
-    """
+
+def addYear(map,temblor, value):
     
-    
-    temblorIndex = datentry['TemblorIndex']
-    temlorentry = m.get(temblorIndex, temblor['place'])
-    if (temlorentry is None):
-        
-        entry = newRegion(temblor['place'], temblor)
-        lt.addLast(entry['lsttemblor'], temblor)
-        m.put(temblorIndex, temblor['place'], entry)
+    if (temblor['gap']) is None or len(temblor['title'])==0: 
+        title = 'Unknown'
     else:
-        entry = me.getValue(temlorentry)
-        lt.addLast(entry['lsttemblor'], temblor)
-    return datentry
+         title = temblor['title']
+        
+    exist = om.get(value,title )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,title, entry)
+    else:
+        entry = me.getValue(exist)
+    addTitle(value, temblor, title)
+    om.put(map,(temblor['time'].date()),value)
+    return map
 
+def addTitle(value, temblor, title):
 
-def newYear(crime):
-    """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
-    """
-    entry = {'TemblorIndex': None}
-    entry['TemblorIndex'] = m.newMap(numelements=30,
-                                     maptype='CHAINING',
-                                     cmpfunction=comparePlaces)
     
-    return entry
-
-
-def newRegion(offensegrp, crime):
-    """
-    Crea una entrada en el indice por tipo de crimen, es decir en
-    la tabla de hash, que se encuentra en cada nodo del arbol.
-    """
-    ofentry = { 'lsttemblor': None}
-    
-    ofentry['lsttemblor'] = lt.newList('SINGLE_LINKED')
-    return ofentry
+    newList = om.get(value, title)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, title, valor)
+    return value
 def updateDateIndex(map, temblor):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
@@ -504,16 +474,19 @@ def req_7_histogram(year, title, prop, bins, analyzer):
     # Rangos
     min_date = f"{year}-01-01"
     max_date = f"{year}-12-31"
-    min_date = datetime.datetime.strptime(min_date, '%Y-%m-%d')
-    max_date = datetime.datetime.strptime(max_date, '%Y-%m-%d')
-
+    
+    
+    a = datetime.date.strftime(min_date, '%Y-%m-%d')
+    b = datetime.date.strftime(max_date, '%Y-%m-%d')
+    print(a)
+    
     # Variables para almacenar propiedades y fechas de eventos para el histograma
     prop_list = []
     date_list = []
     
 
     # Obtener los temblores del año
-    year_events = om.keys(analyzer['years'], min_date, max_date)
+    year_events = om.keys(analyzer['years'],a,b )
 
     # Iterar por las fechas
     for date_key in lt.iterator(year_events):
