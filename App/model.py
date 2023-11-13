@@ -149,7 +149,7 @@ def addNst(value, temblor, nst):
 
 
 def newlist(temblor):
-    newList= lt.newList(datastructure='ARRAY_LIST')
+    newList= lt.newList(datastructure='SINGLE_LINKED')
     return newList
 
 def newData(temblor):
@@ -322,16 +322,20 @@ def req_6(depth,nst,analyzer):
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
+    a =lt.newList('SINGLE_LINKED')
     newLista = lt.newList('SINGLE_LINKED')
     data_structs = analyzer['depth']
     x = om.values(data_structs,depth, om.maxKey(data_structs))
+    
     for i in lt.iterator(x):
        
         f = om.values(i,nst,om.maxKey(i))
         for j in lt.iterator(f):
-            for z in j['elements']:
-                lt.addLast(newLista,z)
-    se.sort(newLista,compareDates2)
+            for z in lt.iterator(j):
+                lt.addLast(newLista,z )
+            
+
+    sa.sort(newLista,compareDates2)
     f= newLista
     return newLista
 
