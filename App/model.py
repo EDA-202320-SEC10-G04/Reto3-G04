@@ -45,6 +45,7 @@ from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 import datetime 
 assert cf
+from math import radians, sin, cos, sqrt, atan2
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
@@ -448,8 +449,6 @@ def getnameTeam(tableList,name):
     for element in lt.iterator(tableList['home_team']):
         if name == element:
             nameTeam.addLast(element)
-
-from math import radians, sin, cos, sqrt, atan2
 
 def getdistance(lon1, lat1, lon2, lat2):
     R = 6371.0
