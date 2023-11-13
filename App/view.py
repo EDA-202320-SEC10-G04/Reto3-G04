@@ -29,7 +29,6 @@ from DISClib.ADT import queue as qu
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 assert cf
-from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
 import model as model
@@ -281,9 +280,19 @@ if __name__ == "__main__":
                 
                 print(" delta tiempo fue:", str(time))
                 print_temblores_fecha( totearthquakes, detalles, events)
+                
         elif int(inputs) == 3:
-            print_req_2(control)
-
+                print("========================== Req No. 2 Inputs ===============")
+                ini  = input("Ingrese la magnitud inicial: ")
+                fin  = input("Ingrese la magnitud final: ")
+                
+                print("========================= Req No.2 Results ==================")
+                f = cont
+                time, totearthquakes, detalles, events = controller.getDatesByRange(cont['dateIndex'], ini, fin)
+                
+                print(" delta tiempo fue:", str(time))
+                print_temblores_fecha( totearthquakes, detalles, events)
+                
         elif int(inputs) == 4:
             print_req_3(control)
 
