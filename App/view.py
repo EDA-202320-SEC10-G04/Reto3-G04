@@ -32,6 +32,7 @@ assert cf
 from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
+from matplotlib import pyplot as plt
 import model as model
 
 def new_controller():
@@ -137,23 +138,53 @@ def print_req_3(control):
     pass
 
 
-def print_req_4(control):
-    """
-        Función que imprime la solución del Requerimiento 4 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
 
 
-def print_req_5(control):
-    """
-        Función que imprime la solución del Requerimiento 5 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 5
+def print_req_4(  detalles):
     
-    keys = ['time', 'mag','lat', 'long', 'depth','sig', 'gap','nst','title','cdi', 'mmi','magType','type','code']
-    answer =controller.sixdata(control)
-    printSimpleTable(answer,keys)
+
+    print('Seleccionando los 20 primeros resultados')
+
+    if len(detalles)> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
+
+        
+        detalles = controller.sixdata(detalles)
+
+        # Crear una tabla para los equipos clasificados
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+        temblor_table.field_names = keys
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+
+        for detail in lt.iterator(detalles):
+            detalle= detail['details']  
+            detalle_table = PrettyTable()  # Crear una tabla para el máximo goleador
+            detalle_keys = ['mag','long','lat','gap', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+                       
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            detalle_table.field_names =  detalle_keys
+            detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+    
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
+
+
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
@@ -162,12 +193,14 @@ def print_req_6(control):
     pass
 
 
-def print_req_7(control):
-    """
-        Función que imprime la solución del Requerimiento 7 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 7
-    pass
+def print_req_7(prop_list, bins, prop, title, year):
+    plt.hist(prop_list, bins=bins)
+    plt.xlabel(f"{prop} Values")
+    plt.ylabel("Number of Events")
+    plt.title(f"Histogram of {prop} for {title} in {year}")
+
+    # Mostrar el histograma
+    plt.show()
 
 
 def print_req_8(control):
@@ -222,7 +255,16 @@ if __name__ == "__main__":
             print_req_3(control)
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            print("========================== Req No. 4 Inputs ===============")
+            
+            sig = input("Ingrese la significancia mínima (sig): ")
+            gap = input("Ingrese la distancia azimutal máxima del evento (gap): ") 
+              
+            print("========================= Req No.4 Results ==================")
+            result, time= controller.req_4(sig, gap,cont)
+           
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print_req_4 (result)
 
         elif int(inputs) == 6:
             z = cont
@@ -230,13 +272,25 @@ if __name__ == "__main__":
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
             answer = controller.req_6(depth,nst, cont)
-            print_req_5(answer)
+            
 
         elif int(inputs) == 7:
-            print_req_6(control)
+            pass
 
         elif int(inputs) == 8:
-            print_req_7(control)
+            print("========================== Req No. 4 Inputs ===============")
+            
+            year= input("Ingrese el año de interés: ")
+            title = input("Ingrese el area de interés: ") 
+            prop =  input("Ingrese la propiedad de interés: ") 
+            bins = input('Ingrese el número de segmentos del histograma: ')
+            
+              
+            print("========================= Req No.4 Results ==================")
+            prop_list, prop_values, time= controller.req_7(year, title, prop, bins, cont)
+           
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print_req_7(prop_list, bins, prop, title, year)
 
         elif int(inputs) == 9:
             print_req_8(control)

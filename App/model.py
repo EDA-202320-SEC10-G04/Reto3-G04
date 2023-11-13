@@ -42,6 +42,7 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+from matplotlib import pyplot as plt
 import datetime 
 assert cf
 
@@ -69,8 +70,10 @@ def newAnalyzer():
     analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
+    analyzer['years'] = om.newMap(omaptype='BST')
 
     analyzer['depth'] = om.newMap(omaptype='BST')
+    analyzer['sig'] = om.newMap(omaptype='BST')
     return analyzer
 
 
@@ -81,12 +84,82 @@ def addTemblor(analyzer, temblor):
     """
     funcion que agrega un crimen al catalogo
     """
+        
+    
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
+    updateSig(analyzer['sig'],temblor)
+    updateYear(analyzer['years'],temblor)
     return analyzer
 
+def updateYear(map, temblor):
+    """
+    Actualiza el índice por años con los temblores.
+    """
+    temblortime = temblor['time']
+    entry = om.get(map, temblortime.date())
+    if entry is None:
+        datentry = newYear(temblor)
+        om.put(map, temblortime.date(), datentry)
+    else:
+        datentry = me.getValue(entry)
+    addYear(datentry, temblor)
+    return map
+def extract_region(place):
+    """
+    Función para extraer la región deseada de la cadena del título del temblor.
+    """
+    parts = place.split(",")  # Separar la cadena por comas
+    if len(parts) > 1:
+        region = parts[1].strip()  # Tomar la segunda parte y eliminar espacios adicionales
+        return region
+    return place 
 
+def addYear(datentry, temblor):
+    """
+    Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
+    de crimenes y una tabla de hash cuya llave es el tipo de crimen y
+    el valor es una lista con los crimenes de dicho tipo en la fecha que
+    se está consultando (dada por el nodo del arbol)
+    """
+    
+    
+    temblorIndex = datentry['TemblorIndex']
+    temlorentry = m.get(temblorIndex, temblor['place'])
+    if (temlorentry is None):
+        
+        entry = newRegion(temblor['place'], temblor)
+        lt.addLast(entry['lsttemblor'], temblor)
+        m.put(temblorIndex, temblor['place'], entry)
+    else:
+        entry = me.getValue(temlorentry)
+        lt.addLast(entry['lsttemblor'], temblor)
+    return datentry
+
+
+def newYear(crime):
+    """
+    Crea una entrada en el indice por fechas, es decir en el arbol
+    binario.
+    """
+    entry = {'TemblorIndex': None}
+    entry['TemblorIndex'] = m.newMap(numelements=30,
+                                     maptype='CHAINING',
+                                     cmpfunction=comparePlaces)
+    
+    return entry
+
+
+def newRegion(offensegrp, crime):
+    """
+    Crea una entrada en el indice por tipo de crimen, es decir en
+    la tabla de hash, que se encuentra en cada nodo del arbol.
+    """
+    ofentry = { 'lsttemblor': None}
+    
+    ofentry['lsttemblor'] = lt.newList('SINGLE_LINKED')
+    return ofentry
 def updateDateIndex(map, temblor):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
@@ -139,14 +212,51 @@ def addDepth(map,temblor, value):
 def addNst(value, temblor, nst):
     time = temblor['time']
     temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    temblor['time'] = temblorTime
+    temblor['time']= temblorTime
     newList = om.get(value, nst)
     valor = me.getValue(newList)
     lt.addLast(valor, temblor)
     om.put(value, nst, valor)
     return value
     
+def updateSig(map, temblor):
+    
+    exist = om.get(map,float (temblor['sig']) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['sig']), value)
+    else:
+        value = me.getValue(exist)
+    addSig(map, temblor,value)
+    return map
 
+
+def addSig(map,temblor, value):
+    
+    if (temblor['gap']) is None or len(temblor['gap'])==0: 
+        gap = 0
+    else:
+        gap = float(temblor['gap'])
+        
+    exist = om.get(value,gap )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,gap, entry)
+    else:
+        entry = me.getValue(exist)
+    addGap(value, temblor, gap)
+    om.put(map,float(temblor['sig']),value)
+    return map
+
+def addGap(value, temblor, gap):
+
+    
+    newList = om.get(value, gap)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, gap, valor)
+    return value
+    
 
 def newlist(temblor):
     newList= lt.newList(datastructure='SINGLE_LINKED')
@@ -201,7 +311,7 @@ def compareDates(date1, date2):
         return -1
 
 
-def compareOffenses(offense1, offense2):
+def comparePlaces(offense1, offense2):
     """
     Compara dos tipos de crimenes
     """
@@ -301,12 +411,57 @@ def req_3(data_structs):
     pass
 
 
-def req_4(data_structs):
+def req_4(sig,gap,analyzer):
     """
-    Función que soluciona el requerimiento 4
+    Función que soluciona el requerimiento 6
     """
-    # TODO: Realizar el requerimiento 4
-    pass
+    # TODO: Realizar el requerimiento 6
+    
+    final = lt.newList('ARRAY_LIST')
+    newLista = lt.newList('ARRAY_LIST')
+    hp = heap.newHeap(compare_dicts)
+    dic = {}
+    data_structs = analyzer['sig']
+   
+    x = om.values(data_structs,float(sig), float(om.maxKey(data_structs)))
+    
+    for i in lt.iterator(x):
+       
+        f = om.values(i,float(om.minKey(i)),float(gap))
+        for j in lt.iterator(f):
+            for z in lt.iterator(j):
+                if len(z['gap'])>0:
+                
+                 if float(z['gap'])>0: 
+                     lt.addFirst(newLista,z)
+                
+   
+
+    sa.sort(newLista,compareDates3)
+    a = lt.subList(newLista,1,17)
+    for z in lt.iterator(a):
+        time = z['time']
+            
+            
+                
+        dic[time] = {
+            'time':time,
+            'events':1,
+            'details':z
+                
+             }
+        lt.addLast(final,dic[time])
+
+
+                
+        
+
+            
+
+    
+    
+    return final
+
 
 
 def req_5(data_structs):
@@ -339,12 +494,56 @@ def req_6(depth,nst,analyzer):
     f= newLista
     return newLista
 
-def req_7(data_structs):
-    """
-    Función que soluciona el requerimiento 7
-    """
-    # TODO: Realizar el requerimiento 7
-    pass
+
+def req_7_histogram(year, title, prop, bins, analyzer):
+    total_events = 0
+    prop_values = lt.newList('ARRAY_LIST')
+
+    # Rangos
+    min_date = f"{year}-01-01"
+    max_date = f"{year}-12-31"
+    min_date = datetime.datetime.strptime(min_date, '%Y-%m-%d')
+    max_date = datetime.datetime.strptime(max_date, '%Y-%m-%d')
+
+    # Variables para almacenar propiedades y fechas de eventos para el histograma
+    prop_list = []
+    date_list = []
+    
+
+    # Obtener los temblores del año
+    year_events = om.keys(analyzer['years'], min_date, max_date)
+
+    # Iterar por las fechas
+    for date_key in lt.iterator(year_events):
+        date_data = me.getValue(m.get(analyzer['years'], date_key))
+
+        # Verificar si la región específica tiene eventos
+        if title in date_data:
+            region_events = me.getValue(m.get(date_data, title))
+
+            for event in lt.iterator(region_events):
+                if prop in event and event[prop] is not None:
+                    # Almacenar las propiedades para el histograma
+                    prop_list.append(event[prop])
+
+                    # Almacenar las fechas para los eventos con la propiedad especificada
+                    date_list.append(event['time'])
+                    lt.addLast(prop_values,event)
+                    
+                    total_events += 1
+
+    # Obtener los valores mínimo y máximo para el histograma
+    min_val = min(prop_list)
+    max_val = max(prop_list)
+    if min_val is None:
+        min_val = 0
+    if max_val is None:
+        max_val = 0
+
+
+    # Mostrar el resumen de eventos y rangos
+    return prop_list, prop_values
+
 
 
 def req_8(data_structs):
@@ -396,6 +595,35 @@ def compareDates2(tem1, tem2):
             if nst1 <  nst2:
                 return False
             elif nst1 > nst2:
+                return True
+def compareDates3(tem1, tem2):
+    """
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    sig1 = tem1['sig']
+    sig2 = tem2['sig']
+
+    gap1 = tem1['gap']
+    gap2 = tem2['gap']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if sig1 <  sig2:
+            return False
+        elif sig1 > sig2:
+            return True
+        else:
+            if gap1 <  gap2:
+                return False
+            elif gap1 > gap2:
                 return True
 
 

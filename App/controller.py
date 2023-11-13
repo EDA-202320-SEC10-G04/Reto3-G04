@@ -54,6 +54,7 @@ def loadData(analyzer, sampleoption):
                                 delimiter=",")
     for crime in input_file:
         model.addTemblor(analyzer, crime)
+        
     return analyzer
 
 
@@ -128,13 +129,14 @@ def req_3(control):
     pass
 
 
-def req_4(control):
-    """
-    Retorna el resultado del requerimiento 4
-    """
-    # TODO: Modificar el requerimiento 4
-    pass
-
+def req_4(sig,gap,analyzer):
+    start_time = get_time()
+    answer = model.req_4(sig,gap,analyzer)
+    end_time = get_time()
+    
+    deltatime = delta_time(start_time, end_time)
+    
+    return answer, deltatime
 
 def req_5(control):
     """
@@ -152,12 +154,14 @@ def req_6(depth,nst, analyzer):
     return answer
 
 
-def req_7(control):
-    """
-    Retorna el resultado del requerimiento 7
-    """
-    # TODO: Modificar el requerimiento 7
-    pass
+def req_7(year, title, prop, bins, analyzer):
+    start_time = get_time()
+    prop_list, prop_values = model.req_7_histogram(year, title, prop, bins, analyzer)
+    end_time = get_time()
+    
+    deltatime = delta_time(start_time, end_time)
+    
+    return prop_list, prop_values, deltatime
 
 
 def req_8(control):
@@ -211,6 +215,13 @@ def sixdata(tableList):
     else:
         firsts = getFirstNum(3, tableList)
         lasts = getLastNum(3, tableList)
+        return model.listFusion(firsts, lasts)
+def othersixdata(tableList):
+    if model.lt.size(tableList) <6:
+        return tableList
+    else:
+        firsts = getFirstNum(6, tableList)
+        lasts = getLastNum(0, tableList)
         return model.listFusion(firsts, lasts)
 def Tendata(tableList):
     if model.lt.size(tableList) <=6:
