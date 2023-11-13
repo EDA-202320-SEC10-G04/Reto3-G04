@@ -145,15 +145,54 @@ def print_req_4(control):
     pass
 
 
-def print_req_5(control):
+def print_req_5(control,deltatime,size):
     """
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
+    print(f"Total de fechas: {size}")
+    print(f"Total de eventos: {size}")
+
+    if size> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
+
+        if  size > 6:
+            detalles = controller.sixdata(control)
+
+        # Crear una tabla 
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+        temblor_table.field_names = keys
+        # Recorrer los earthquakes
+
+        for detail in lt.iterator(detalles):
+            detalle= detail['details']  
+            detalle_table = PrettyTable()  # Crear una tabla 
+            detalle_keys = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+                       
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            detalle_table.field_names =  detalle_keys
+            detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
+            
+            # Agregar una fila en la tabla 
+            temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
+            temblor_table.add_row(temblor_data)
     
-    keys = ['time', 'mag','lat', 'long', 'depth','sig', 'gap','nst','title','cdi', 'mmi','magType','type','code']
-    answer =controller.sixdata(control)
-    printSimpleTable(answer,keys)
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el temblor especificado.")
+    print("El tiempo fue de: ", deltatime)
+    
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
@@ -229,8 +268,8 @@ if __name__ == "__main__":
             depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
-            answer = controller.req_6(depth,nst, cont)
-            print_req_5(answer)
+            answer,deltatime,size = controller.req_6(depth,nst, cont)
+            print_req_5(answer,deltatime,size)
 
         elif int(inputs) == 7:
             print_req_6(control)
