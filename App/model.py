@@ -398,7 +398,8 @@ def req_6(year,lat,lon,radio, data_structs):
     temblores = me.getValue(temblor)
     for j in lt.iterator(temblores):
         distancia = getdistance(lon,lat,j['long'],j['lat'])
-        
+        time = j['time']
+        time2 = datetime.datetime.strptime(j['time'],'%Y-%m-%dT%H:%M:%S.%fZ')
         j['distancia'] = round(distancia,3)
         lt.addLast(array,j)
     x =sa.sort(array,sortDistance)
@@ -546,3 +547,15 @@ def searchnameBinary(data, goal):
             low = mid + 1
 
     return result
+
+def compareDates2(tem1, tem2):
+    """
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
