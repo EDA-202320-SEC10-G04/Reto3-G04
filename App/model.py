@@ -399,15 +399,17 @@ def req_6(year,lat,lon,radio, data_structs):
     for j in lt.iterator(temblores):
         distancia = getdistance(lon,lat,j['long'],j['lat'])
         
-        j['distancia'] = distancia
+        j['distancia'] = round(distancia,3)
         lt.addLast(array,j)
-    sa.sort(array,sortDistance)
+    x =sa.sort(array,sortDistance)
 
     last_p =searchnameBinary(array,radio)
-    work = True
-    i= 0
-    while work and i<last_p:
-        lt.addLast(array2, i)
+
+    i= 1
+    while i<int(last_p):
+        element = lt.getElement(x,i)
+        lt.addLast(array2, element)
+        i+=1
     return array2
 
 def req_7(data_structs):
@@ -494,7 +496,7 @@ def getnameTeam(tableList,name):
 
 def getdistance(lon1, lat1, lon2, lat2):
     R = 6371.0
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, float(lon2), float(lat2)])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
@@ -508,14 +510,19 @@ def sortDistance(temblor1, temblor2):
     sig1 = temblor1['sig']
     sig2 = temblor2['sig']
     if distance1 < distance2:
-        return False
-    elif distance1 > distance2:
         return True
-    else:        
+    elif distance1 > distance2:
+        return  False
+    else: 
+        return False
+
+        """       
         if sig1 <  sig2:
-            return False
-        elif sig1 > sig2:
             return True
+        elif sig1 > sig2:
+            return False
+
+            """
        
 
 
@@ -535,6 +542,7 @@ def searchnameBinary(data, goal):
         elif lt.getElement(data,mid)['distancia'] > goal:
             high = mid - 1
         else:
+            result = mid
             low = mid + 1
 
     return result
