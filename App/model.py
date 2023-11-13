@@ -75,7 +75,11 @@ def newAnalyzer():
     analyzer['depth'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
     
-    analyzer['year'] = om.newMap(omaptype='BST',cmpfunction=compareDates)
+    
+    analyzer['year'] = m.newMap(1000,
+                                maptype='CHAINING',
+                                loadfactor=50,
+                                )
     return analyzer
 
 
@@ -89,7 +93,7 @@ def addTemblor(analyzer, temblor):
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
-
+    addYear(analyzer['year'], temblor)
     return analyzer
 
 
@@ -157,6 +161,26 @@ def newlist(temblor):
 
 
 
+#----------------------------------------------------------------
+def addYear(catalog, temblor):
+    time = temblor['time'][0:4]
+    year = datetime.datetime.strptime(time, '%Y')
+    ano = int(time)
+    exist= m.contains(catalog, ano)
+    if exist:
+        entry = m.get(catalog, ano)
+        #lista_temblores = me.getValue(entry)
+    else:
+        #lista_temblores = new_Temblores(key)
+        m.put(catalog, ano, temblor)
+    
+    return catalog
+        
+
+
+
+
+
 
 
 def compare_dicts(dict1, dict2):
@@ -193,6 +217,8 @@ def compareDates(date1, date2):
         return 1
     else:
         return -1
+
+
 
 
 def compareOffenses(offense1, offense2):
@@ -275,6 +301,7 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
+    f =analyzer['year']
     detalles = lt.newList('ARRAY_LIST')
     final = lt.newList('ARRAY_LIST')
     dic = {}

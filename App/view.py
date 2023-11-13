@@ -265,6 +265,7 @@ if __name__ == "__main__":
             print('Mayor Llave: ' + str(controller.maxKey(cont)))
                                     #--------------------MATCH RESULTS ----------------------
             print("-------------------- TEMBLORES --------------------")
+           
             sixTemblores =controller.Tendata(cont['temblores'])
             
             
