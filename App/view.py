@@ -150,8 +150,8 @@ def print_req_5(control,deltatime,size):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    print(f"Total de fechas: {size}")
-    print(f"Total de eventos: {size}")
+    
+    print(f"Total de eventos : {size}")
 
     if size> 0:
         keys = [
@@ -163,34 +163,35 @@ def print_req_5(control,deltatime,size):
         ]
 
         if  size > 6:
-            detalles = controller.sixdata(control)
-
-        # Crear una tabla 
+            tabla = controller.sixdata(control)
+        
+            # Crear una tabla 
         temblor_table = PrettyTable()
         temblor_table.field_names = keys
         temblor_table.horizontal_char = '-'
         temblor_table.hrules =ALL
-        temblor_table.field_names = keys
+
         # Recorrer los earthquakes
 
-        for detail in lt.iterator(detalles):
-            detalle= detail['details']  
+        for detail in lt.iterator(tabla):
             detalle_table = PrettyTable()  # Crear una tabla 
-            detalle_keys = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            detalle_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            detalle_table.add_row([detail['mag'], detail['long'], detail['lat'], detail['depth'],
+                       detail['sig'], detail['nst'], detail['title'], detail['cdi'],
+                       detail['mmi'], detail['magType'], detail['type'], detail['code']])
+
+
+
                        
-            
-            # Agregar los datos del máximo goleador a la tabla del máximo goleador
-            detalle_table.field_names =  detalle_keys
-            detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
-            
-            # Agregar una fila en la tabla 
-            temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
-            temblor_table.add_row(temblor_data)
+            temblor_table.add_row([detail['time'],'1',detalle_table])
+     
+            #
     
         # Imprimir la tabla de equipos clasificados
         print(temblor_table)
     else:
-        print("No se encontraron goles para el temblor especificado.")
+        print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
     
 def print_req_6(control):
