@@ -379,15 +379,7 @@ def consultar_15_eventos_sismicos(sig_min, gap_max, data_structs):
 
 
 
-def req_5(data_structs):
-    """
-    Función que soluciona el requerimiento 5
-    """
-    # TODO: Realizar el requerimiento 5
-    pass
-
-
-def req_6(year,lat,lon,radio, data_structs):
+def req_5(year,lat,lon,radio, data_structs):
     """
     Función que soluciona el requerimiento 6
     """
@@ -400,6 +392,7 @@ def req_6(year,lat,lon,radio, data_structs):
         distancia = getdistance(lon,lat,j['long'],j['lat'])
         time = j['time']
         time2 = datetime.datetime.strptime(j['time'],'%Y-%m-%dT%H:%M:%S.%fZ')
+        j['time'] = time2
         j['distancia'] = round(distancia,3)
         lt.addLast(array,j)
     x =sa.sort(array,sortDistance)
@@ -411,7 +404,10 @@ def req_6(year,lat,lon,radio, data_structs):
         element = lt.getElement(x,i)
         lt.addLast(array2, element)
         i+=1
-    return array2
+    f = sa.sort(array,sortDistance)
+    return f
+
+
 
 def req_7(data_structs):
     """
@@ -508,12 +504,9 @@ def sortDistance(temblor1, temblor2):
     distance1 = temblor1['distancia']
     distance2 = temblor2['distancia']
     
-    sig1 = temblor1['sig']
-    sig2 = temblor2['sig']
     if distance1 < distance2:
         return True
-    elif distance1 > distance2:
-        return  False
+
     else: 
         return False
 

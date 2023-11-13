@@ -141,21 +141,15 @@ def req_4(sig_min, gap_max,analyzer):
     return size, result, deltatime
 
 
-def req_5(control):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
-
-def req_6(year,lat,lon,radio,n, data_structs):
+def req_5(year,lat,lon,radio,n, data_structs):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
     f = n
-    answer = model.req_6(year,lat,lon,radio, data_structs)
+    answer = model.req_5(year,lat,lon,radio, data_structs)
     return answer
+
 
 
 def req_7(year,lat,lon,radio,n, data_structs ):

@@ -317,7 +317,7 @@ if __name__ == "__main__":
             n = int(input("Ingrese el número de los N eventos de magnitud más cercana a mostrar.: "))
             
             
-            answer = controller.req_6(year,lat,lon,radio,n, cont['year'] )
+            answer = controller.req_5(year,lat,lon,radio,n, cont['year'] )
             print_req_6(answer)
 
         elif int(inputs) == 8:
