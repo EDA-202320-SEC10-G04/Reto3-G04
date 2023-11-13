@@ -199,10 +199,6 @@ def print_req_5(control,deltatime,size):
                     
         ]
 
-        
-        detalles = controller.sixdata(detalles)
-
-        # Crear una tabla para los equipos clasificados
         if  size > 6:
             tabla = controller.sixdata(control)
         
@@ -234,7 +230,6 @@ def print_req_5(control,deltatime,size):
     else:
         print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
-    
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
