@@ -164,15 +164,15 @@ def newlist(temblor):
 #----------------------------------------------------------------
 def addYear(catalog, temblor):
     time = temblor['time'][0:4]
-    year = datetime.datetime.strptime(time, '%Y')
-    ano = int(time)
-    exist= m.contains(catalog, ano)
+    year = int(time)
+    exist= m.contains(catalog, year)
     if exist:
-        entry = m.get(catalog, ano)
-        #lista_temblores = me.getValue(entry)
+        valor = m.get(catalog, year)
+        lista_temblores = me.getValue(valor)
+        lt.addLast(lista_temblores, temblor)
     else:
-        #lista_temblores = new_Temblores(key)
-        m.put(catalog, ano, temblor)
+        lista_temblores = lt.newList(datastructure='SINGLE_LINKED')
+    m.put(catalog, year, lista_temblores)
     
     return catalog
         
@@ -387,13 +387,28 @@ def req_5(data_structs):
     pass
 
 
-def req_6(data_structs):
+def req_6(year,lat,lon,radio, data_structs):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
+    array = lt.newList('ARRAY_LIST')
+    array2 = lt.newList('ARRAY_LIST')
+    temblor =m.get(data_structs,year)
+    temblores = me.getValue(temblor)
+    for j in lt.iterator(temblores):
+        distancia = getdistance(lon,lat,j['long'],j['lat'])
+        
+        j['distancia'] = distancia
+        lt.addLast(array,j)
+    sa.sort(array,sortDistance)
 
+    last_p =searchnameBinary(array,radio)
+    work = True
+    i= 0
+    while work and i<last_p:
+        lt.addLast(array2, i)
+    
 
 def req_7(data_structs):
     """
@@ -486,3 +501,27 @@ def getdistance(lon1, lat1, lon2, lat2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = R * c
     return distance
+def sortDistance(temblor1, temblor2):
+    distance1 = temblor1['distancia']
+    distance2 = temblor2['distancia']
+    if (distance1 > distance2):
+        return True
+    else:
+        return False
+    
+def searchnameBinary(data, goal):
+    low, high = 0 , lt.size(data)
+    result = -1  # Variable para almacenar la última posición encontrada
+
+    while low <= high:
+        mid = (low + high) // 2
+
+        if lt.getElement(data,mid)['distancia'] == goal:
+            result = mid  # Actualiza la última posición encontrada
+            low = mid + 1  # Busca en la mitad derecha para encontrar la última ocurrencia
+        elif lt.getElement(data,mid)['distancia'] > goal:
+            high = mid - 1
+        else:
+            low = mid + 1
+
+    return result

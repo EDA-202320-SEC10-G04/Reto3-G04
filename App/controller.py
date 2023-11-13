@@ -157,12 +157,13 @@ def req_6(depth,nst, data_structs):
     return answer
 
 
-def req_7(control):
+def req_7(year,lat,lon,radio,n, data_structs ):
     """
     Retorna el resultado del requerimiento 7
     """
     # TODO: Modificar el requerimiento 7
-    pass
+    answer = model.req_6(year,lat,lon,radio, data_structs)
+    return answer
 
 
 def req_8(control):
