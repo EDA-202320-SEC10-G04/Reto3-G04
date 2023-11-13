@@ -140,12 +140,15 @@ def print_req_3(control):
 
 
 
-def print_req_4(  detalles):
+def print_req_5(control,deltatime,size):
+    """
+        Función que imprime la solución del Requerimiento 5 en consola
+    """
+    # TODO: Imprimir el resultado del requerimiento 5
     
+    print(f"Total de eventos : {size}")
 
-    print('Seleccionando los 20 primeros resultados')
-
-    if len(detalles)> 0:
+    if size> 0:
         keys = [
                 'time',
                 'events',
@@ -158,33 +161,38 @@ def print_req_4(  detalles):
         detalles = controller.sixdata(detalles)
 
         # Crear una tabla para los equipos clasificados
+        if  size > 6:
+            tabla = controller.sixdata(control)
+        
+            # Crear una tabla 
         temblor_table = PrettyTable()
         temblor_table.field_names = keys
         temblor_table.horizontal_char = '-'
         temblor_table.hrules =ALL
-        temblor_table.field_names = keys
-        # Recorrer los equipos clasificados y agregarlos a la tabla
 
-        for detail in lt.iterator(detalles):
-            detalle= detail['details']  
-            detalle_table = PrettyTable()  # Crear una tabla para el máximo goleador
-            detalle_keys = ['mag','long','lat','gap', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+        # Recorrer los earthquakes
+
+        for detail in lt.iterator(tabla):
+            detalle_table = PrettyTable()  # Crear una tabla 
+            detalle_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            detalle_table.add_row([detail['mag'], detail['long'], detail['lat'], detail['depth'],
+                       detail['sig'], detail['nst'], detail['title'], detail['cdi'],
+                       detail['mmi'], detail['magType'], detail['type'], detail['code']])
+
+
+
                        
-            
-            # Agregar los datos del máximo goleador a la tabla del máximo goleador
-            detalle_table.field_names =  detalle_keys
-            detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
-            
-            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
-            temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
-            temblor_table.add_row(temblor_data)
+            temblor_table.add_row([detail['time'],'1',detalle_table])
+     
+            #
     
         # Imprimir la tabla de equipos clasificados
         print(temblor_table)
     else:
-        print("No se encontraron goles para el jugador especificado.")
-
-
+        print("No se encontro temblor especifico.")
+    print("El tiempo fue de: ", deltatime)
+    
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
@@ -271,8 +279,8 @@ if __name__ == "__main__":
             depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
-            answer = controller.req_6(depth,nst, cont)
-            
+            answer,deltatime,size = controller.req_6(depth,nst, cont)
+            print_req_5(answer,deltatime,size)
 
         elif int(inputs) == 7:
             pass

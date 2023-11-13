@@ -150,8 +150,12 @@ def req_6(depth,nst, analyzer):
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
+    start_time = get_time()
     answer = model.req_6(depth,nst, analyzer)
-    return answer
+    end_time = get_time()
+    size = model.lt.size(answer)
+    deltatime = delta_time(start_time, end_time)
+    return answer,deltatime,size
 
 
 def req_7(year, title, prop, bins, analyzer):
