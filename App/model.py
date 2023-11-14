@@ -394,7 +394,9 @@ def req_5(year,lat,lon,radio, data_structs):
         time2 = datetime.datetime.strptime(j['time'],'%Y-%m-%dT%H:%M:%S.%fZ')
         j['time'] = time2
         j['distancia'] = round(distancia,3)
-        lt.addLast(array,j)
+        if j['distancia'] <radio:
+            lt.addLast(array,j)
+    """
     x =sa.sort(array,sortDistance)
 
     last_p =searchnameBinary(array,radio)
@@ -404,7 +406,8 @@ def req_5(year,lat,lon,radio, data_structs):
         element = lt.getElement(x,i)
         lt.addLast(array2, element)
         i+=1
-    f = sa.sort(array,sortDistance)
+    """
+    f = sa.sort(array,compareDates3)
     return f
 
 
@@ -509,14 +512,6 @@ def sortDistance(temblor1, temblor2):
 
     else: 
         return False
-
-        """       
-        if sig1 <  sig2:
-            return True
-        elif sig1 > sig2:
-            return False
-
-            """
        
 
 
@@ -541,14 +536,14 @@ def searchnameBinary(data, goal):
 
     return result
 
-def compareDates2(tem1, tem2):
+def compareDates3(tem1, tem2):
     """
     Compara dos fechas
 
     """
     date1 = tem1['time']
     date2 = tem2['time']
-    if date1 < date2:
+    if date1 > date2:
         return False
-    elif date1 > date2:
+    elif date1 < date2:
         return True
