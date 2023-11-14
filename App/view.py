@@ -330,6 +330,11 @@ if __name__ == "__main__":
 
         if int(inputs) == 1:
             sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
+            start_time = controller.get_time()
+    
+            end_time = controller.get_time()
+    
+            
             print("\nCargando información de crimenes ....")
             
             controller.loadData(cont, sample_option)
@@ -345,6 +350,8 @@ if __name__ == "__main__":
             
             
             printSimpleTable(sixTemblores, ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"])
+            deltatime = controller.delta_time(start_time, end_time)
+            print("el tiempo fue :", deltatime)
                     
         elif int(inputs) == 2:
                 print("========================== Req No. 1 Inputs ===============")
