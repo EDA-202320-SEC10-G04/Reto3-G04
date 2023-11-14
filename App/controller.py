@@ -131,12 +131,12 @@ def req_3(control):
 
 def req_4(sig,gap,analyzer):
     start_time = get_time()
-    answer = model.req_4(sig,gap,analyzer)
+    size, answer = model.req_4(sig,gap,analyzer)
     end_time = get_time()
     
     deltatime = delta_time(start_time, end_time)
     
-    return answer, deltatime
+    return size, answer, deltatime
 
 def req_5(control):
     """

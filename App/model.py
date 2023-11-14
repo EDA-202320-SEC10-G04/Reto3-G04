@@ -90,7 +90,7 @@ def addTemblor(analyzer, temblor):
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
     updateSig(analyzer['sig'],temblor)
-    updateYear(analyzer['years'],temblor)
+    #updateYear(analyzer['years'],temblor)
     return analyzer
 
 def updateYear(map, temblor):
@@ -385,11 +385,9 @@ def req_4(sig,gap,analyzer):
     """
     Función que soluciona el requerimiento 6
     """
-    # TODO: Realizar el requerimiento 6
-    
+    # TODO: Realizar el requerimiento 
     final = lt.newList('ARRAY_LIST')
     newLista = lt.newList('ARRAY_LIST')
-    hp = heap.newHeap(compare_dicts)
     dic = {}
     data_structs = analyzer['sig']
    
@@ -403,11 +401,9 @@ def req_4(sig,gap,analyzer):
                 if len(z['gap'])>0:
                 
                  if float(z['gap'])>0: 
-                     lt.addFirst(newLista,z)
-                
-   
-
+                     lt.addLast(newLista,z)
     sa.sort(newLista,compareDates3)
+    
     a = lt.subList(newLista,1,17)
     for z in lt.iterator(a):
         time = z['time']
@@ -421,16 +417,7 @@ def req_4(sig,gap,analyzer):
                 
              }
         lt.addLast(final,dic[time])
-
-
-                
-        
-
-            
-
-    
-    
-    return final
+    return lt.size(newLista), final
 
 
 

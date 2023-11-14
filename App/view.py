@@ -139,7 +139,8 @@ def print_req_3(control):
 
 
 
-def print_req_4 (detalles):
+def print_req_4 (size, detalles):
+    print(f'El total de eventos con una distancia azimutal  máxima y una significancia mínima son: {size}')
     if len(detalles)> 0:
         keys = [
                 'time',
@@ -168,7 +169,7 @@ def print_req_4 (detalles):
         for equipo in lt.iterator(detalles):
             details_data = equipo['details']  
             details_table = PrettyTable()  # Crear una tabla para el máximo goleador    
-            details_keys = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            details_keys = ['mag','long','lat','depth', 'sig', 'gap', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
             
             # Agregar los datos del máximo goleador a la tabla del máximo goleador
             details_table.field_names = details_keys
@@ -306,10 +307,10 @@ if __name__ == "__main__":
             gap = input("Ingrese la distancia azimutal máxima del evento (gap): ") 
               
             print("========================= Req No.4 Results ==================")
-            result, time= controller.req_4(sig, gap,cont)
+            size, result, time= controller.req_4(sig, gap,cont)
            
             print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
-            print_req_4 (result)
+            print_req_4 (size, result)
 
         elif int(inputs) == 6:
             z = cont
@@ -323,7 +324,7 @@ if __name__ == "__main__":
             pass
 
         elif int(inputs) == 8:
-            print("========================== Req No. 4 Inputs ===============")
+            print("========================== Req No. 7 Inputs ===============")
             
             year= input("Ingrese el año de interés: ")
             title = input("Ingrese el area de interés: ") 
@@ -331,7 +332,7 @@ if __name__ == "__main__":
             bins = input('Ingrese el número de segmentos del histograma: ')
             
               
-            print("========================= Req No.4 Results ==================")
+            print("========================= Req No.7 Results ==================")
             prop_list, prop_values, time= controller.req_7(year, title, prop, bins, cont)
            
             print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
