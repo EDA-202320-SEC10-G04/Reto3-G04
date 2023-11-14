@@ -331,7 +331,7 @@ if __name__ == "__main__":
            
             sixTemblores =controller.Tendata(cont['temblores'])
             
-            
+            start_time = controller.get_time()
             printSimpleTable(sixTemblores, ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"])
             end_time = controller.get_time()
             deltatime = controller.delta_time(start_time, end_time)
