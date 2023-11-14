@@ -165,13 +165,49 @@ def print_req_2(control):
     pass
 
 
-def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+def print_req_3 (detalles):
+    if len(detalles)> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
 
+        
+        detalles = controller.sixdata(detalles)
+
+        # Crear una tabla para los equipos clasificados
+        
+            
+        
+            # Crear una tabla 
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+     # Crear una tabla para los equipos clasificados
+
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+
+        for equipo in lt.iterator(detalles):
+            details_data = equipo['details']  
+            details_table = PrettyTable()  # Crear una tabla para el máximo goleador    
+            details_keys = ['mag','lat','long','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            details_table.field_names = details_keys
+            details_table.add_row([details_data.get(key, '') for key in details_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            temblor_data = [equipo[key] if key != 'details' else str(details_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+            
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 
 def print_annotations_over_a_period_of_time (size, result):
@@ -306,7 +342,7 @@ if __name__ == "__main__":
             print("========================= Req No.3 Results ==================")
             size, result , time= controller.req_3(mag, depth ,cont)
            
-            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print("Para calcular los 10 eventos por magnitud y profundidad, delta tiempo fue:", str(time))
             print_annotations_over_a_period_of_time (size,result)
             
         elif int(inputs) == 5:         

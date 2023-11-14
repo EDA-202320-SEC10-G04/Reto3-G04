@@ -339,29 +339,47 @@ def req_2(data_structs):
     # TODO: Realizar el requerimiento 2
     pass
 
-def in_order_traversal2(node, mag_min, depth_max, result):
-    if node is not None:
-        in_order_traversal(node['left'], mag_min, depth_max, result)
-
-        event = node['value']['lsttemblores']['first']['info']
-        if event['mag']:
-            cmp_mag = float(mag_min) - float(event['mag'])
-        if event['depth']:
-            cmp_depth = float(depth_max) - float(event['depth'])
-        
-        if cmp_mag <= 0 and cmp_depth >= 0:
-            lt.addLast(result, event)
-
-        in_order_traversal(node['right'], mag_min, depth_max, result)   
-
-def eventos_recientes_magnitud(mag_min, depth_max, data_structs):
-    result = lt.newList()
-
-    in_order_traversal2(data_structs['dateIndex']['root'], mag_min, depth_max, result)
-    size = lt.size(result)
+def req_3(min_mag,max_depth,analyzer):
+    """
+    Función que soluciona el requerimiento 3
+    """
     
+    final = lt.newList('ARRAY_LIST')
+    newLista = lt.newList('ARRAY_LIST')
+    hp = heap.newHeap(compare_dicts)
+    dic = {}
+    data_structs = analyzer['mag']
+   
+    x = om.values(data_structs,float(min_mag), float(om.maxKey(data_structs)))
+    
+    for i in lt.iterator(x):
+       
+        f = om.values(i,float(om.minKey(i)),float(max_depth))
+        for j in lt.iterator(f):
+            for z in lt.iterator(j):
+                if len(z['depth'])>0:
+                
+                 if float(z['depth'])>0: 
+                     lt.addFirst(newLista,z)
+                
+   
 
-    return size, result
+    sa.sort(newLista,compareReq3)
+    a = lt.subList(newLista,1,17)
+    for z in lt.iterator(a):
+        time = z['time']
+            
+            
+                
+        dic[time] = {
+            'time':time,
+            'events':1,
+            'details':z
+                
+             }
+        lt.addLast(final,dic[time])
+    return final
+
 
 
 
@@ -563,3 +581,33 @@ def searchnameBinary(data, goal):
             low = mid + 1
 
     return result
+
+def compareReq3(tem1, tem2):
+    """
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    mag1 = tem1['mag']
+    mag2 = tem2['mag']
+
+    depth1 = tem1['depth']
+    depth2 = tem2['depth']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if mag1 <  mag2:
+            return False
+        elif mag1 > mag2:
+            return True
+        else:
+            if depth1 <  depth2:
+                return False
+            elif depth1 > depth2:
+                return True

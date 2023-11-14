@@ -125,7 +125,7 @@ def req_3(mag_min, depth_max,analyzer):
     
     start_time = get_time()
    
-    size, result = model.eventos_recientes_magnitud(mag_min, depth_max, analyzer)
+    size, result = model.req_3(mag_min, depth_max, analyzer)
 
     end_time = get_time()
     deltatime = delta_time(end_time, start_time)
