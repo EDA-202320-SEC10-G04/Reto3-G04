@@ -298,8 +298,17 @@ if __name__ == "__main__":
                 print_temblores_fecha( totearthquakes, detalles, events)
                 
         elif int(inputs) == 4:
-            print_req_3(control)
-
+            print("========================== Req No. 3 Inputs ===============")
+         
+            mag = input("Ingrese la magnitud mínima (mag): ")
+            depth = input("Ingrese la profundidad máxima del evento (depth): ") 
+              
+            print("========================= Req No.3 Results ==================")
+            size, result , time= controller.req_3(mag, depth ,cont)
+           
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print_annotations_over_a_period_of_time (size,result)
+            
         elif int(inputs) == 5:         
             print("========================== Req No. 4 Inputs ===============")
          
@@ -311,6 +320,7 @@ if __name__ == "__main__":
            
             print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
             print_annotations_over_a_period_of_time (size,result)
+            
         elif int(inputs) == 6:
             depth = input("Ingrese la profundidad minima del evento: ")
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))

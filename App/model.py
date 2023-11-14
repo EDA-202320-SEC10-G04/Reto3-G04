@@ -339,13 +339,30 @@ def req_2(data_structs):
     # TODO: Realizar el requerimiento 2
     pass
 
+def in_order_traversal2(node, mag_min, depth_max, result):
+    if node is not None:
+        in_order_traversal(node['left'], mag_min, depth_max, result)
 
-def req_3(data_structs):
-    """
-    Función que soluciona el requerimiento 3
-    """
-    # TODO: Realizar el requerimiento 3
-    pass
+        event = node['value']['lsttemblores']['first']['info']
+        if event['mag']:
+            cmp_mag = float(mag_min) - float(event['mag'])
+        if event['depth']:
+            cmp_depth = float(depth_max) - float(event['depth'])
+        
+        if cmp_mag <= 0 and cmp_depth >= 0:
+            lt.addLast(result, event)
+
+        in_order_traversal(node['right'], mag_min, depth_max, result)   
+
+def eventos_recientes_magnitud(mag_min, depth_max, data_structs):
+    result = lt.newList()
+
+    in_order_traversal2(data_structs['dateIndex']['root'], mag_min, depth_max, result)
+    size = lt.size(result)
+    
+
+    return size, result
+
 
 
 # Función recursiva para realizar un recorrido in-order en el árbol RBT

@@ -121,12 +121,15 @@ def req_2(control):
     pass
 
 
-def req_3(control):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
+def req_3(mag_min, depth_max,analyzer):
+    
+    start_time = get_time()
+   
+    size, result = model.eventos_recientes_magnitud(mag_min, depth_max, analyzer)
+
+    end_time = get_time()
+    deltatime = delta_time(end_time, start_time)
+    return size, result, deltatime
 
 
 def req_4(sig_min, gap_max,analyzer):
