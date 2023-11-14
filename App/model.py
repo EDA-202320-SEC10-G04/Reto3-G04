@@ -80,6 +80,8 @@ def newAnalyzer():
                                 maptype='CHAINING',
                                 loadfactor=50,
                                 )
+    analyzer["mag"] = om.newMap(omaptype="BST")
+    
     return analyzer
 
 
@@ -139,6 +141,43 @@ def addDepth(entry,temblor):
     
     heap.insert(entry['lstTemblores'], mainValue)
     return entry
+
+def updateMag(map, temblor):
+    
+    exist = om.get(map,float (temblor['mag']) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['mag']), value)
+    else:
+        value = me.getValue(exist)
+    addMag(map, temblor,value)
+    return map
+
+
+def addMag(map,temblor, value):
+    
+    if (temblor['depth']) is None or len(temblor['depth'])==0: 
+        depth = 0
+    else:
+        depth = float(temblor['depth'])
+        
+    exist = om.get(value,depth )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,depth, entry)
+    else:
+        entry = me.getValue(exist)
+    addDepth2(value, temblor, depth)
+    om.put(map,float(temblor['mag']),value)
+    return map
+
+def addDepth2(value, temblor, depth):
+
+    newList = om.get(value, depth)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, depth, valor)
+    return value
 
 def newData(temblor):
     entry = {'lstTemblores': None}
@@ -349,7 +388,7 @@ def req_3(min_mag,max_depth,analyzer):
     hp = heap.newHeap(compare_dicts)
     dic = {}
     data_structs = analyzer['mag']
-   
+    
     x = om.values(data_structs,float(min_mag), float(om.maxKey(data_structs)))
     
     for i in lt.iterator(x):
@@ -362,8 +401,6 @@ def req_3(min_mag,max_depth,analyzer):
                  if float(z['depth'])>0: 
                      lt.addFirst(newLista,z)
                 
-   
-
     sa.sort(newLista,compareReq3)
     a = lt.subList(newLista,1,17)
     for z in lt.iterator(a):
@@ -388,7 +425,7 @@ def in_order_traversal(node, sig_min, gap_max, result):
     if node is not None:
         in_order_traversal(node['left'], sig_min, gap_max, result)
 
-        event = node['value']['lsttemblores']['first']['info']
+        event = node['value']['temblores']['first']['info']
         if event['sig']:
          sig = float(event['sig'])
         cmp_sig = float(sig_min) - sig
