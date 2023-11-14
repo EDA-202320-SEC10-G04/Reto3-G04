@@ -208,15 +208,87 @@ def print_req_5(control):
     pass
 
 
-def print_req_6(control):
+def print_req_6(control,deltatime,size, n,max):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    x  = controller.sixdata(control)
-    keys =  ["mag","time","lat","long","depth","sig","gap","distancia","nst","title","cdi","mmi","magType","type","code"]
 
-    printSimpleTable(x,keys)
+    print(f"Total de eventos : {size}")
+
+    if size> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
+
+        if  n < 6:
+            print("------------max----------------------------------------------------")
+            printSimpleTable(max,['time','mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'])
+            print("================================")
+            tabla = controller.getFirstNum(n,control)
+            temblor_table = PrettyTable()
+            temblor_table.field_names = keys
+            temblor_table.horizontal_char = '-'
+            temblor_table.hrules =ALL
+
+            # Recorrer los earthquakes
+
+            for detail in lt.iterator(tabla):
+                detalle_table = PrettyTable()  # Crear una tabla 
+                detalle_table.field_names = ['mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+                
+                detalle_table.add_row([detail['mag'], detail['lat'], detail['long'], detail['depth'],
+                        detail['sig'], detail['gap'], detail['distancia'], detail['nst'],
+                        detail['title'], detail['cdi'], detail['mmi'], detail['magType']
+                        , detail['type'], detail['code']])
+
+
+
+                        
+                temblor_table.add_row([detail['time'],'1',detalle_table])
+        
+                #
+        
+            # Imprimir la tabla de equipos clasificados
+            print(temblor_table)
+        else:
+            print("------------max----------------------------------------------------")
+            printSimpleTable(max,['time','mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'])
+            print("================================")
+            tabla = controller.sixdata(control)
+        
+            # Crear una tabla 
+            temblor_table = PrettyTable()
+            temblor_table.field_names = keys
+            temblor_table.horizontal_char = '-'
+            temblor_table.hrules =ALL
+
+            # Recorrer los earthquakes
+
+            for detail in lt.iterator(tabla):
+                detalle_table = PrettyTable()  # Crear una tabla 
+                detalle_table.field_names = ['mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+                
+                detalle_table.add_row([detail['mag'], detail['lat'], detail['long'], detail['depth'],
+                        detail['sig'], detail['gap'], detail['distancia'], detail['nst'],
+                        detail['title'], detail['cdi'], detail['mmi'], detail['magType']
+                        , detail['type'], detail['code']])
+
+
+                        
+                temblor_table.add_row([detail['time'],'1',detalle_table])
+        
+                #
+        
+            # Imprimir la tabla de equipos clasificados
+            print(temblor_table)
+    else:
+        print("No se encontro temblor especifico.")
+    print("El tiempo fue de: ", deltatime)
 
 
 def print_req_7(control):
@@ -317,8 +389,9 @@ if __name__ == "__main__":
             n = int(input("Ingrese el número de los N eventos de magnitud más cercana a mostrar.: "))
             
             
-            answer = controller.req_5(year,lat,lon,radio,n, cont['year'] )
-            print_req_6(answer)
+            answer,deltatime, max = controller.req_5(year,lat,lon,radio, cont['year'] )
+            size = lt.size(answer)
+            print_req_6(answer,deltatime,size, n,max)
 
         elif int(inputs) == 8:
             print_req_7(control)

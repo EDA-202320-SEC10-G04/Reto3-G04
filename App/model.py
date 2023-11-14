@@ -384,6 +384,9 @@ def req_5(year,lat,lon,radio, data_structs):
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
+    a =0
+    max ={}
+    c = lt.newList('SINGLE_LINKED')
     array = lt.newList('ARRAY_LIST')
     array2 = lt.newList('ARRAY_LIST')
     temblor =m.get(data_structs,year)
@@ -394,21 +397,15 @@ def req_5(year,lat,lon,radio, data_structs):
         time2 = datetime.datetime.strptime(j['time'],'%Y-%m-%dT%H:%M:%S.%fZ')
         j['time'] = time2
         j['distancia'] = round(distancia,3)
+        
         if j['distancia'] <radio:
             lt.addLast(array,j)
-    """
-    x =sa.sort(array,sortDistance)
-
-    last_p =searchnameBinary(array,radio)
-
-    i= 1
-    while i<int(last_p):
-        element = lt.getElement(x,i)
-        lt.addLast(array2, element)
-        i+=1
-    """
+            if a <float(j['mag']):
+                a =float(j['mag'])
+                max = j
+    lt.addLast(c,max)
     f = sa.sort(array,compareDates3)
-    return f
+    return f, c
 
 
 
@@ -503,38 +500,9 @@ def getdistance(lon1, lat1, lon2, lat2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = R * c
     return distance
-def sortDistance(temblor1, temblor2):
-    distance1 = temblor1['distancia']
-    distance2 = temblor2['distancia']
-    
-    if distance1 < distance2:
-        return True
-
-    else: 
-        return False
-       
 
 
 
-
-    
-def searchnameBinary(data, goal):
-    low, high = 0 , lt.size(data)
-    result = -1  # Variable para almacenar la última posición encontrada
-
-    while low <= high:
-        mid = (low + high) // 2
-
-        if lt.getElement(data,mid)['distancia'] == goal:
-            result = mid  # Actualiza la última posición encontrada
-            low = mid + 1  # Busca en la mitad derecha para encontrar la última ocurrencia
-        elif lt.getElement(data,mid)['distancia'] > goal:
-            high = mid - 1
-        else:
-            result = mid
-            low = mid + 1
-
-    return result
 
 def compareDates3(tem1, tem2):
     """
