@@ -32,6 +32,7 @@ assert cf
 from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
+from matplotlib import pyplot as plt
 import model as model
 
 def new_controller():
@@ -175,45 +176,56 @@ def print_req_3(control):
 
 
 
-def print_annotations_over_a_period_of_time (size, result):
-    """ Función que imprime las anotaciones, en un periodo de tiempo específico
+def print_req_4 (size, detalles):
+    print(f'El total de eventos con una distancia azimutal  máxima y una significancia mínima son: {size}')
+    if len(detalles)> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
 
-    Args:
-        total_goals (int): Número total de goles
-        total_tournaments (int): Número de torneos en los que se hicieron los goles
-        penalties (int): Número de goles que fueron hechos en penalties
-        own_goals (int): Número de goles que fueron autogol
-        player_goals (list): Lista de los goles del jugador.
-    """
+        
+        detalles = controller.sixdata(detalles)
 
-    print("Detalles de los goles:")
+        # Crear una tabla para los equipos clasificados
+        
+            
+        
+            # Crear una tabla 
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+     # Crear una tabla para los equipos clasificados
 
-    if lt.size(result) > 0:
-        keys =  ["code","time","lat","long","mag","title","depth","felt","cdi","mmi","tsunami"]
+        # Recorrer los equipos clasificados y agregarlos a la tabla
 
-        if lt.size(result) > 10:
-            # Aquí puedes implementar una función para mostrar solo los primeros 6 goles
-            result = controller.Tendatadata(result)
-
-        # Imprimir la tabla de goles
-        printSimpleTable(result, keys)
+        for equipo in lt.iterator(detalles):
+            details_data = equipo['details']  
+            details_table = PrettyTable()  # Crear una tabla para el máximo goleador    
+            details_keys = ['mag','long','lat','depth', 'sig', 'gap', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            details_table.field_names = details_keys
+            details_table.add_row([details_data.get(key, '') for key in details_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            temblor_data = [equipo[key] if key != 'details' else str(details_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+            
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
     else:
         print("No se encontraron goles para el jugador especificado.")
-
-def print_req_5(control):
+def print_req_5(control,deltatime,size):
     """
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    pass
-
-
-def print_req_6(control,deltatime,size, n,max):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-
+    
     print(f"Total de eventos : {size}")
 
     if size> 0:
@@ -225,78 +237,53 @@ def print_req_6(control,deltatime,size, n,max):
                     
         ]
 
-        if  n < 6:
-            print("------------max----------------------------------------------------")
-            printSimpleTable(max,['time','mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'])
-            print("================================")
-            tabla = controller.getFirstNum(n,control)
-            temblor_table = PrettyTable()
-            temblor_table.field_names = keys
-            temblor_table.horizontal_char = '-'
-            temblor_table.hrules =ALL
-
-            # Recorrer los earthquakes
-
-            for detail in lt.iterator(tabla):
-                detalle_table = PrettyTable()  # Crear una tabla 
-                detalle_table.field_names = ['mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
-                
-                detalle_table.add_row([detail['mag'], detail['lat'], detail['long'], detail['depth'],
-                        detail['sig'], detail['gap'], detail['distancia'], detail['nst'],
-                        detail['title'], detail['cdi'], detail['mmi'], detail['magType']
-                        , detail['type'], detail['code']])
-
-
-
-                        
-                temblor_table.add_row([detail['time'],'1',detalle_table])
-        
-                #
-        
-            # Imprimir la tabla de equipos clasificados
-            print(temblor_table)
-        else:
-            print("------------max----------------------------------------------------")
-            printSimpleTable(max,['time','mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'])
-            print("================================")
+        if  size > 6:
             tabla = controller.sixdata(control)
         
             # Crear una tabla 
-            temblor_table = PrettyTable()
-            temblor_table.field_names = keys
-            temblor_table.horizontal_char = '-'
-            temblor_table.hrules =ALL
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
 
-            # Recorrer los earthquakes
+        # Recorrer los earthquakes
 
-            for detail in lt.iterator(tabla):
-                detalle_table = PrettyTable()  # Crear una tabla 
-                detalle_table.field_names = ['mag','lat','long','depth', 'sig','gap', 'distancia', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
-                
-                detalle_table.add_row([detail['mag'], detail['lat'], detail['long'], detail['depth'],
-                        detail['sig'], detail['gap'], detail['distancia'], detail['nst'],
-                        detail['title'], detail['cdi'], detail['mmi'], detail['magType']
-                        , detail['type'], detail['code']])
+        for detail in lt.iterator(tabla):
+            detalle_table = PrettyTable()  # Crear una tabla 
+            detalle_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            detalle_table.add_row([detail['mag'], detail['long'], detail['lat'], detail['depth'],
+                       detail['sig'], detail['nst'], detail['title'], detail['cdi'],
+                       detail['mmi'], detail['magType'], detail['type'], detail['code']])
 
 
-                        
-                temblor_table.add_row([detail['time'],'1',detalle_table])
-        
-                #
-        
-            # Imprimir la tabla de equipos clasificados
-            print(temblor_table)
+
+                       
+            temblor_table.add_row([detail['time'],'1',detalle_table])
+     
+            #
+    
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
     else:
         print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
-
-
-def print_req_7(control):
+def print_req_6(control):
     """
-        Función que imprime la solución del Requerimiento 7 en consola
+        Función que imprime la solución del Requerimiento 6 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 7
+    # TODO: Imprimir el resultado del requerimiento 6
     pass
+
+
+def print_req_7(prop_list, bins, prop, title, year):
+    plt.hist(prop_list, bins=bins)
+    plt.xlabel(f"{prop} Values")
+    plt.ylabel("Number of Events")
+    plt.title(f"Histogram of {prop} for {title} in {year}")
+
+    # Mostrar el histograma
+    plt.show()
 
 
 def print_req_8(control):
@@ -318,6 +305,7 @@ if __name__ == "__main__":
     working = True
     #ciclo del menu
     cont = controller.init()
+    cont = controller.init()
     while working:
         
 
@@ -328,13 +316,8 @@ if __name__ == "__main__":
         
             
 
-        if int(inputs) == 1:
+        if int(inputs[0]) == 1:
             sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
-            start_time = controller.get_time()
-    
-            
-    
-            
             print("\nCargando información de crimenes ....")
             
             controller.loadData(cont, sample_option)
@@ -371,23 +354,25 @@ if __name__ == "__main__":
         elif int(inputs) == 4:
             print_req_3(control)
 
-        elif int(inputs) == 5:         
+        elif int(inputs) == 5:
             print("========================== Req No. 4 Inputs ===============")
-         
+            
             sig = input("Ingrese la significancia mínima (sig): ")
             gap = input("Ingrese la distancia azimutal máxima del evento (gap): ") 
               
             print("========================= Req No.4 Results ==================")
-            size, result , time= controller.req_4(sig, gap,cont)
+            size, result, time= controller.req_4(sig, gap,cont)
            
             print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
-            print_annotations_over_a_period_of_time (size,result)
+            print_req_4 (size, result)
+
         elif int(inputs) == 6:
-            depth = input("Ingrese la profundidad minima del evento: ")
+            z = cont
+            depth = float(input("Ingrese la profundidad minima del evento: "))
             nst = int(input("Ingrese el numero minimo de estaciones que detectan el  evento: "))
             
-            answer = controller.req_6(depth,nst, control['model']['depth'] )
-            print_req_5(control)
+            answer,deltatime,size = controller.req_6(depth,nst, cont)
+            print_req_5(answer,deltatime,size)
 
         elif int(inputs) == 7:
             year = int(input("Ingrese el año relevante: "))
@@ -402,7 +387,19 @@ if __name__ == "__main__":
             print_req_6(answer,deltatime,size, n,max)
 
         elif int(inputs) == 8:
-            print_req_7(control)
+            print("========================== Req No. 7 Inputs ===============")
+            
+            year= input("Ingrese el año de interés: ")
+            title = input("Ingrese el area de interés: ") 
+            prop =  input("Ingrese la propiedad de interés: ") 
+            bins = input('Ingrese el número de segmentos del histograma: ')
+            
+              
+            print("========================= Req No.7 Results ==================")
+            prop_list, prop_values, time= controller.req_7(year, title, prop, bins, cont)
+           
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print_req_7(prop_list, bins, prop, title, year)
 
         elif int(inputs) == 9:
             print_req_8(control)

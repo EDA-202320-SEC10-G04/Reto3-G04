@@ -43,6 +43,7 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+
 import datetime 
 assert cf
 from math import radians, sin, cos, sqrt, atan2
@@ -71,15 +72,19 @@ def newAnalyzer():
     analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
+    analyzer['years'] = om.newMap(omaptype='BST')
 
-    analyzer['depth'] = om.newMap(omaptype='BST',
-                                      cmpfunction=compareDates)
+
+    
     
     
     analyzer['year'] = m.newMap(1000,
                                 maptype='CHAINING',
                                 loadfactor=50,
                                 )
+
+    analyzer['depth'] = om.newMap(omaptype='BST')
+    analyzer['sig'] = om.newMap(omaptype='BST')
     return analyzer
 
 
@@ -90,13 +95,56 @@ def addTemblor(analyzer, temblor):
     """
     funcion que agrega un crimen al catalogo
     """
+        
+    
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
-    addYear(analyzer['year'], temblor)
+
+    updateYear(analyzer['year'], temblor)
+
+    updateSig(analyzer['sig'],temblor)
+    #updateYear(analyzer['years'],temblor)
+
     return analyzer
 
+def updateYear(map, temblor):
+    
+    exist = om.get(map, (temblor['time'].date()) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,temblor['time'].date(), value)
+    else:
+        value = me.getValue(exist)
+    addYear(map, temblor,value)
+    return map
 
+
+def addYear(map,temblor, value):
+    
+    if (temblor['gap']) is None or len(temblor['title'])==0: 
+        title = 'Unknown'
+    else:
+         title = temblor['title']
+        
+    exist = om.get(value,title )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,title, entry)
+    else:
+        entry = me.getValue(exist)
+    addTitle(value, temblor, title)
+    om.put(map,(temblor['time'].date()),value)
+    return map
+
+def addTitle(value, temblor, title):
+
+    
+    newList = om.get(value, title)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, title, valor)
+    return value
 def updateDateIndex(map, temblor):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
@@ -118,31 +166,89 @@ def updateDateIndex(map, temblor):
     return map
 
 def updateDepth(map, temblor):
-    time = temblor['time']
-    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    exist = om.get(map,temblor['depth'] )
+    
+    exist = om.get(map,float (temblor['depth']) )
     if exist is None:
-        entry = newData(temblor)
-        om.put(map,temblor['depth'], entry)
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['depth']), value)
     else:
-        entry = me.getValue(exist)
-    addDepth(entry, temblor)
+        value = me.getValue(exist)
+    addDepth(map, temblor,value)
     return map
 
-def addDepth(entry,temblor):
+
+def addDepth(map,temblor, value):
     
-    mainValue ={
-    }
-    value = lt.newList('ARRAY_LIST')
-    lt.addLast(value,temblor)
-    mainValue[temblor['time']] = value
+    if len(temblor['nst']) ==0: 
+        nst = 0
+    else:
+        nst = float(temblor['nst'])
+        
+    exist = om.get(value,nst )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,nst, entry)
+    else:
+        entry = me.getValue(exist)
+    addNst(value, temblor, nst)
+    om.put(map,float(temblor['depth']),value)
+    return map
+
+def addNst(value, temblor, nst):
+    time = temblor['time']
+    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    temblor['time']= temblorTime
+    newList = om.get(value, nst)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, nst, valor)
+    return value
     
-    heap.insert(entry['lstTemblores'], mainValue)
-    return entry
+def updateSig(map, temblor):
+    
+    exist = om.get(map,float (temblor['sig']) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['sig']), value)
+    else:
+        value = me.getValue(exist)
+    addSig(map, temblor,value)
+    return map
+
+
+def addSig(map,temblor, value):
+    
+    if (temblor['gap']) is None or len(temblor['gap'])==0: 
+        gap = 0
+    else:
+        gap = float(temblor['gap'])
+        
+    exist = om.get(value,gap )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,gap, entry)
+    else:
+        entry = me.getValue(exist)
+    addGap(value, temblor, gap)
+    om.put(map,float(temblor['sig']),value)
+    return map
+
+def addGap(value, temblor, gap):
+
+    
+    newList = om.get(value, gap)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, gap, valor)
+    return value
+    
+
+def newlist(temblor):
+    newList= lt.newList(datastructure='SINGLE_LINKED')
+    return newList
 
 def newData(temblor):
-    entry = {'lstTemblores': None}
-    entry['lstTemblores'] = heap.newHeap(compare_dicts)
+    entry = om.newMap(omaptype='RBT') 
     return entry
 def addDateIndex(datentry, temblor):
     lt.addLast(datentry, temblor)
@@ -210,6 +316,7 @@ def compareIds(id1, id2):
 def compareDates(date1, date2):
     """
     Compara dos fechas
+    
     """
     if (date1 == date2):
         return 0
@@ -220,8 +327,7 @@ def compareDates(date1, date2):
 
 
 
-
-def compareOffenses(offense1, offense2):
+def comparePlaces(offense1, offense2):
     """
     Compara dos tipos de crimenes
     """
@@ -348,42 +454,49 @@ def req_3(data_structs):
     pass
 
 
-# Función recursiva para realizar un recorrido in-order en el árbol RBT
-def in_order_traversal(node, sig_min, gap_max, result):
-    if node is not None:
-        in_order_traversal(node['left'], sig_min, gap_max, result)
 
-        event = node['value']['lsttemblores']['first']['info']
-        if event['sig']:
-         sig = float(event['sig'])
-        cmp_sig = float(sig_min) - sig
-        if event['gap']:
-            cmp_gap = float(gap_max) - float(event['gap'])
-        
-        if cmp_sig <= 0 and cmp_gap >= 0:
-            lt.addLast(result, event)
-
-        in_order_traversal(node['right'], sig_min, gap_max, result)
-
-
-# Función para consultar los 15 eventos sísmicos más recientes
-def consultar_15_eventos_sismicos(sig_min, gap_max, data_structs):
-    result = lt.newList()
-
-    in_order_traversal(data_structs['dateIndex']['root'], sig_min, gap_max, result)
-    size = lt.size(result)
+def req_4(sig,gap,analyzer):
+    """
+    Función que soluciona el requerimiento 6
+    """
+    # TODO: Realizar el requerimiento 
+    final = lt.newList('ARRAY_LIST')
+    newLista = lt.newList('ARRAY_LIST')
+    dic = {}
+    data_structs = analyzer['sig']
+   
+    x = om.values(data_structs,float(sig), float(om.maxKey(data_structs)))
     
-
-    return size, result
+    for i in lt.iterator(x):
+       
+        f = om.values(i,float(om.minKey(i)),float(gap))
+        for j in lt.iterator(f):
+            for z in lt.iterator(j):
+                if len(z['gap'])>0:
+                
+                 if float(z['gap'])>0: 
+                     lt.addLast(newLista,z)
+    sa.sort(newLista,compareDates3)
+    
+    a = lt.subList(newLista,1,17)
+    for z in lt.iterator(a):
+        time = z['time']
+            
+            
+                
+        dic[time] = {
+            'time':time,
+            'events':1,
+            'details':z
+                
+             }
+        lt.addLast(final,dic[time])
+    return lt.size(newLista), final
 
 
 
 
 def req_5(year,lat,lon,radio, data_structs):
-    """
-    Función que soluciona el requerimiento 6
-    """
-    # TODO: Realizar el requerimiento 6
     a =0
     max ={}
     c = lt.newList('SINGLE_LINKED')
@@ -406,15 +519,83 @@ def req_5(year,lat,lon,radio, data_structs):
     lt.addLast(c,max)
     f = merg.sort(array,compareDates3)
     return f, c
-
-
-
-def req_7(data_structs):
+def req_6(depth,nst,analyzer):
     """
-    Función que soluciona el requerimiento 7
+    Función que soluciona el requerimiento 6
     """
-    # TODO: Realizar el requerimiento 7
-    pass
+    # TODO: Realizar el requerimiento 6
+    
+    newLista = lt.newList('SINGLE_LINKED')
+    data_structs = analyzer['depth']
+    x = om.values(data_structs,depth, om.maxKey(data_structs))
+    
+    for i in lt.iterator(x):
+        
+        f = om.values(i,nst,om.maxKey(i))
+        
+        for j in lt.iterator(f):
+          
+            for z in lt.iterator(j):
+                lt.addLast(newLista,z )
+            
+
+    merg.sort(newLista,compareDates2)
+    
+    return newLista
+
+
+def req_7_histogram(year, title, prop, bins, analyzer):
+    total_events = 0
+    prop_values = lt.newList('ARRAY_LIST')
+
+    # Rangos
+    min_date = f"{year}-01-01"
+    max_date = f"{year}-12-31"
+    
+    
+    a = datetime.date.strftime(min_date, '%Y-%m-%d')
+    b = datetime.date.strftime(max_date, '%Y-%m-%d')
+    print(a)
+    
+    # Variables para almacenar propiedades y fechas de eventos para el histograma
+    prop_list = []
+    date_list = []
+    
+
+    # Obtener los temblores del año
+    year_events = om.keys(analyzer['years'],a,b )
+
+    # Iterar por las fechas
+    for date_key in lt.iterator(year_events):
+        date_data = me.getValue(m.get(analyzer['years'], date_key))
+
+        # Verificar si la región específica tiene eventos
+        if title in date_data:
+            region_events = me.getValue(m.get(date_data, title))
+
+            for event in lt.iterator(region_events):
+                if prop in event and event[prop] is not None:
+                    # Almacenar las propiedades para el histograma
+                    prop_list.append(event[prop])
+
+                    # Almacenar las fechas para los eventos con la propiedad especificada
+                    date_list.append(event['time'])
+                    lt.addLast(prop_values,event)
+                    
+                    total_events += 1
+
+    # Obtener los valores mínimo y máximo para el histograma
+    min_val = min(prop_list)
+    max_val = max(prop_list)
+    if min_val is None:
+        min_val = 0
+    if max_val is None:
+        max_val = 0
+
+
+    # Mostrar el resumen de eventos y rangos
+    return prop_list, prop_values
+
 
 
 def req_8(data_structs):
@@ -437,18 +618,65 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def sort_criteria(data_1, data_2):
-    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
 
-    Args:
-        data1 (_type_): _description_
-        data2 (_type_): _description_
-
-    Returns:
-        _type_: _description_
+def compareDates2(tem1, tem2):
     """
-    #TODO: Crear función comparadora para ordenar
-    pass
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    profundidad1 = tem1['depth']
+    profundidad2 = tem2['depth']
+
+    nst1 = tem1['nst']
+    nst2 = tem2['nst']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if profundidad1 <  profundidad2:
+            return False
+        elif profundidad1 > profundidad2:
+            return True
+        else:
+            if nst1 <  nst2:
+                return False
+            elif nst1 > nst2:
+                return True
+def compareDates3(tem1, tem2):
+    """
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    sig1 = tem1['sig']
+    sig2 = tem2['sig']
+
+    gap1 = tem1['gap']
+    gap2 = tem2['gap']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if sig1 <  sig2:
+            return False
+        elif sig1 > sig2:
+            return True
+        else:
+            if gap1 <  gap2:
+                return False
+            elif gap1 > gap2:
+                return True
 
 
 def sort(data_structs):
