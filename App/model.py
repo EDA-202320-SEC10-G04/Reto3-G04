@@ -404,7 +404,7 @@ def req_5(year,lat,lon,radio, data_structs):
                 a =float(j['mag'])
                 max = j
     lt.addLast(c,max)
-    f = sa.sort(array,compareDates3)
+    f = merg.sort(array,compareDates3)
     return f, c
 
 
