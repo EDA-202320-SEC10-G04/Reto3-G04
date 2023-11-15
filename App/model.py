@@ -497,9 +497,10 @@ def req_4(sig,gap,analyzer):
 
 
 
-def req_5(year,lat,lon,radio, data_structs):
+def req_5(n,year,lat,lon,radio, data_structs):
     a =0
     max ={}
+    n = int(n)
     c = lt.newList('SINGLE_LINKED')
     array = lt.newList('ARRAY_LIST')
     array2 = lt.newList('ARRAY_LIST')
@@ -518,8 +519,10 @@ def req_5(year,lat,lon,radio, data_structs):
                 a =float(j['mag'])
                 ax = j
     lt.addLast(c,ax)
-    f = merg.sort(array,compareDates3)
-    return f, c
+    merg.sort(array,compareDates3)
+    a = lt.subList(array,1,n+2)
+    
+    return a, c
 def req_6(depth,nst,analyzer):
     """
     Función que soluciona el requerimiento 6

@@ -139,13 +139,13 @@ def req_4(sig,gap,analyzer):
     
     return size, answer, deltatime
 
-def req_5(year,lat,lon,radio, data_structs):
+def req_5(n,year,lat,lon,radio, data_structs):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
     start_time = get_time()
-    answer, ax = model.req_5(year,lat,lon,radio, data_structs)
+    answer, ax = model.req_5(n,year,lat,lon,radio, data_structs)
     end_time = get_time()
     deltatime = delta_time(end_time, start_time)
     return answer,deltatime ,ax

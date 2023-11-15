@@ -187,8 +187,8 @@ def print_req_4 (size, detalles):
                     
         ]
 
-        
-        detalles = controller.sixdata(detalles)
+        if size>6:
+            detalles = controller.sixdata(detalles)
 
         # Crear una tabla para los equipos clasificados
         
@@ -238,7 +238,7 @@ def print_req_5(control,deltatime,size):
         ]
 
         if  size > 6:
-            tabla = controller.sixdata(control)
+            control = controller.sixdata(control)
         
             # Crear una tabla 
         temblor_table = PrettyTable()
@@ -248,7 +248,7 @@ def print_req_5(control,deltatime,size):
 
         # Recorrer los earthquakes
 
-        for detail in lt.iterator(tabla):
+        for detail in lt.iterator(control):
             detalle_table = PrettyTable()  # Crear una tabla 
             detalle_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
             
@@ -286,6 +286,7 @@ def print_req_6(control,deltatime,size, n,ax):
                 
 
         ]
+        
         if  size > 6:
             tabla = controller.sixdata(control)
         
@@ -447,7 +448,7 @@ if __name__ == "__main__":
             n = int(input("Ingrese el número de los N eventos de magnitud más cercana a mostrar.: "))
             
             
-            answer,deltatime, ax = controller.req_5(year,lat,lon,radio, cont['year'] )
+            answer,deltatime, ax = controller.req_5(n,year,lat,lon,radio, cont['year'] )
             size = lt.size(answer)
             print_req_6(answer,deltatime,size, n,ax)
 
