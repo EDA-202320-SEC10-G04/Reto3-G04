@@ -158,13 +158,12 @@ def print_temblores_fecha( totearthquakes, detalles, events):
 
 
 def print_req_2( totearthquakes, detalles, events):
-    print("Clasificación de los mejores anotadores:")
-    print(f"Total de fechas: {totearthquakes}")
-    print(f"Total de eventos: {events}")
+    print(f"Total de magnitudes diferentes: {totearthquakes}")
+    print(f"Total de eventos entre magnitudes: {events}")
 
     if events> 0:
         keys = [
-                'time',
+                'mag',
                 'events',
                 'details'
                 
@@ -174,29 +173,28 @@ def print_req_2( totearthquakes, detalles, events):
         if  events > 6:
             detalles = controller.sixdata(detalles)
 
-        # Crear una tabla para los equipos clasificados
+        
         temblor_table = PrettyTable()
         temblor_table.field_names = keys
         temblor_table.horizontal_char = '-'
         temblor_table.hrules =ALL
         temblor_table.field_names = keys
-        # Recorrer los equipos clasificados y agregarlos a la tabla
-
+        
         for detail in lt.iterator(detalles):
             detalle= detail['details']  
-            detalle_table = PrettyTable()  # Crear una tabla para el máximo goleador
-            detalle_keys = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            detalle_table = PrettyTable()  
+            detalle_keys = ['time','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
                        
             
-            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            
             detalle_table.field_names =  detalle_keys
             detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
             
-            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            
             temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
             temblor_table.add_row(temblor_data)
     
-        # Imprimir la tabla de equipos clasificados
+        
         print(temblor_table)
     else:
         print("No se encontraron goles para el jugador especificado.")
@@ -365,10 +363,10 @@ if __name__ == "__main__":
                 
                 print("========================= Req No.2 Results ==================")
                 f = cont
-                time, totearthquakes, detalles, events = controller.req_2(cont['dateIndex'], ini, fin)
+                time, totearthquakes, detalles, events = controller.req_2(cont['magIndex'], ini, fin)
                 
                 print(" delta tiempo fue:", str(time))
-                print_temblores_fecha( totearthquakes, detalles, events)
+                print_req_2( totearthquakes, detalles, events)
                 
         elif int(inputs) == 4:
             print("========================== Req No. 3 Inputs ===============")

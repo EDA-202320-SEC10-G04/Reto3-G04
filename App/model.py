@@ -65,13 +65,17 @@ def newAnalyzer():
     Retorna el analizador inicializado.
     """
     analyzer = {'temblores': None,
-                'dateIndex': None
+                'dateIndex': None,
+                'magIndex': None
                 }
 
     analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
+    analyzer['magIndex'] = om.newMap(omaptype='BST',
+                                      cmpfunction=compareDates)
 
+    
     analyzer['depth'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
     
@@ -94,6 +98,7 @@ def addTemblor(analyzer, temblor):
     """
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
+    updateMagIndex(analyzer['magIndex'],temblor)
     updateDepth(analyzer['depth'],temblor)
     addYear(analyzer['year'], temblor)
     updateMag(analyzer['mag'],temblor)
@@ -131,6 +136,21 @@ def updateDepth(map, temblor):
         entry = me.getValue(exist)
     addDepth(entry, temblor)
     return map
+
+def updateMagIndex(map, temblor):
+    mag = temblor['mag']
+    entry = om.get(map, mag)
+    if entry is None:
+        datentry = newDataEntry(temblor)
+        om.put(map, mag, datentry)
+    else:
+        datentry = me.getValue(entry)
+    addMagIndex(datentry, temblor)
+    return map
+
+def addMagIndex(datentry, temblor):
+    lt.addLast(datentry, temblor)
+    return datentry
 
 def addDepth(entry,temblor):
     
@@ -376,28 +396,26 @@ def req_2(analyzer, initialmag, finalmag):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
-    detalles = lt.newList('ARRAY_LIST')
     final = lt.newList('ARRAY_LIST')
     dic = {}
     lst = om.values(analyzer, initialmag, finalmag)
-    keys = om.keys(analyzer, initialmag, finalmag)
     totearthquakes = lt.size(lst)
     
     events = 0
     for lstdate in lt.iterator(lst):
         for j in lt.iterator(lstdate):
             
-            time = j['time']
+            mag = j['mag']
             
             
             events += 1
-            dic[time] = {
-                'time':time,
+            dic[mag] = {
+                'mag':mag,
                 'events':1,
                 'details':j
                 
             }
-            lt.addFirst(final,dic[time])
+            lt.addFirst(final,dic[mag])
         
     
         
