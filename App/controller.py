@@ -114,20 +114,26 @@ def getDatesByRange(analyzer, ini, fin):
     deltatime = delta_time(start_time, end_time)
     return deltatime,  totearthquakes, detalles, events
 
-def req_2(control):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    # TODO: Modificar el requerimiento 2
-    pass
+def req_2(analyzer, ini, fin):
+    
+    start_time = get_time()
+    totearthquakes, detalles, events = model.req_2(analyzer, ini, fin)
+    end_time = get_time()
+    
+    deltatime = delta_time(start_time, end_time)
+    return deltatime,  totearthquakes, detalles, events
 
 
-def req_3(control):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
+
+def req_3(mag_min, depth_max,analyzer):
+    
+    start_time = get_time()
+   
+    result = model.req_3(mag_min, depth_max, analyzer)
+
+    end_time = get_time()
+    deltatime = delta_time(end_time, start_time)
+    return result, deltatime
 
 
 def req_4(sig,gap,analyzer):

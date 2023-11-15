@@ -29,7 +29,6 @@ from DISClib.ADT import queue as qu
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 assert cf
-from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
 from matplotlib import pyplot as plt
@@ -159,24 +158,141 @@ def print_temblores_fecha( totearthquakes, detalles, events):
         print("No se encontraron goles para el jugador especificado.")
 
 
-def print_req_2(control):
-    """
-        Función que imprime la solución del Requerimiento 2 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+def print_req_2( totearthquakes, detalles, events):
+    print(f"Total de magnitudes diferentes: {totearthquakes}")
+    print(f"Total de eventos entre magnitudes: {events}")
+
+    if events> 0:
+        keys = [
+                'mag',
+                'events',
+                'details'
+                
+                    
+        ]
+
+        if  events > 6:
+            detalles = controller.sixdata(detalles)
+
+        
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+        temblor_table.field_names = keys
+        
+        for detail in lt.iterator(detalles):
+            detalle= detail['details']  
+            detalle_table = PrettyTable()  
+            detalle_keys = ['time','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+                       
+            
+            
+            detalle_table.field_names =  detalle_keys
+            detalle_table.add_row([detalle.get(key, '') for key in detalle_keys])
+            
+            
+            temblor_data = [detail[key] if key != 'details' else str(detalle_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+    
+        
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 
-def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+def print_req_3 (detalles):
+    if len(detalles)> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
 
+        
+        detalles = controller.sixdata(detalles)
+
+        # Crear una tabla para los equipos clasificados
+        
+            
+        
+            # Crear una tabla 
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+     # Crear una tabla para los equipos clasificados
+
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+
+        for equipo in lt.iterator(detalles):
+            details_data = equipo['details']  
+            details_table = PrettyTable()  # Crear una tabla para el máximo goleador    
+            details_keys = ['mag','lat','long','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            details_table.field_names = details_keys
+            details_table.add_row([details_data.get(key, '') for key in details_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            temblor_data = [equipo[key] if key != 'details' else str(details_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+            
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 
 def print_req_4 (size, detalles):
+    print(f'El total de eventos con una distancia azimutal  máxima y una significancia mínima son: {size}')
+    if len(detalles)> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+                    
+        ]
+
+        if size>6:
+            detalles = controller.sixdata(detalles)
+
+        # Crear una tabla para los equipos clasificados
+        
+            
+        
+            # Crear una tabla 
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+     # Crear una tabla para los equipos clasificados
+
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+
+        for equipo in lt.iterator(detalles):
+            details_data = equipo['details']  
+            details_table = PrettyTable()  # Crear una tabla para el máximo goleador    
+            details_keys = ['mag','long','lat','depth', 'sig', 'gap', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            details_table.field_names = details_keys
+            details_table.add_row([details_data.get(key, '') for key in details_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            temblor_data = [equipo[key] if key != 'details' else str(details_table) for key in keys]
+            temblor_table.add_row(temblor_data)
+            
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
+
+
+def print_req_5(control,deltatime,size):
     print(f'El total de eventos con una distancia azimutal  máxima y una significancia mínima son: {size}')
     if len(detalles)> 0:
         keys = [
@@ -414,12 +530,31 @@ if __name__ == "__main__":
                 
                 print(" delta tiempo fue:", str(time))
                 print_temblores_fecha( totearthquakes, detalles, events)
+                
         elif int(inputs) == 3:
-            print_req_2(control)
-
+                print("========================== Req No. 2 Inputs ===============")
+                ini  = input("Ingrese la magnitud inicial: ")
+                fin  = input("Ingrese la magnitud final: ")
+                
+                print("========================= Req No.2 Results ==================")
+                f = cont
+                time, totearthquakes, detalles, events = controller.req_2(cont['magIndex'], ini, fin)
+                
+                print(" delta tiempo fue:", str(time))
+                print_req_2( totearthquakes, detalles, events)
+                
         elif int(inputs) == 4:
-            print_req_3(control)
-
+            print("========================== Req No. 3 Inputs ===============")
+         
+            mag = input("Ingrese la magnitud mínima (mag): ")
+            depth = input("Ingrese la profundidad máxima del evento (depth): ") 
+              
+            print("========================= Req No.3 Results ==================")
+            result , time= controller.req_3(mag, depth ,cont)
+           
+            print("Para calcular los 10 eventos por magnitud y profundidad, delta tiempo fue:", str(time))
+            print_req_3(result)
+            
         elif int(inputs) == 5:
             print("========================== Req No. 4 Inputs ===============")
             

@@ -66,12 +66,16 @@ def newAnalyzer():
     Retorna el analizador inicializado.
     """
     analyzer = {'temblores': None,
-                'dateIndex': None
+                'dateIndex': None,
+                'magIndex': None
                 }
 
     analyzer['temblores'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       cmpfunction=compareDates)
+    analyzer['magIndex'] = om.newMap(omaptype='BST',
+                                      cmpfunction=compareDates)
+
     analyzer['years'] = om.newMap(omaptype='BST')
 
 
@@ -82,6 +86,8 @@ def newAnalyzer():
                                 maptype='CHAINING',
                                 loadfactor=50,
                                 )
+    analyzer["mag"] = om.newMap(omaptype="BST")
+    
 
     analyzer['depth'] = om.newMap(omaptype='BST')
     analyzer['sig'] = om.newMap(omaptype='BST')
@@ -99,10 +105,11 @@ def addTemblor(analyzer, temblor):
     
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
+    updateMagIndex(analyzer['magIndex'],temblor)
     updateDepth(analyzer['depth'],temblor)
     addYear(analyzer['year'], temblor)
+    updateMag(analyzer['mag'],temblor)
     updateYear(analyzer['years'], temblor)
-
     updateSig(analyzer['sig'],temblor)
     #updateYear(analyzer['years'],temblor)
 
@@ -216,6 +223,21 @@ def updateSig(map, temblor):
     addSig(map, temblor,value)
     return map
 
+def updateMagIndex(map, temblor):
+    mag = temblor['mag']
+    entry = om.get(map, mag)
+    if entry is None:
+        datentry = newDataEntry(temblor)
+        om.put(map, mag, datentry)
+    else:
+        datentry = me.getValue(entry)
+    addMagIndex(datentry, temblor)
+    return map
+
+def addMagIndex(datentry, temblor):
+    lt.addLast(datentry, temblor)
+    return datentry
+
 
 def addSig(map,temblor, value):
     
@@ -247,6 +269,80 @@ def addGap(value, temblor, gap):
 def newlist(temblor):
     newList= lt.newList(datastructure='SINGLE_LINKED')
     return newList
+
+def updateMag(map, temblor):
+    
+    exist = om.get(map,float (temblor['mag']) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['mag']), value)
+    else:
+        value = me.getValue(exist)
+    addMag(map, temblor,value)
+    return map
+
+
+def addMag(map,temblor, value):
+    
+    if (temblor['depth']) is None or len(temblor['depth'])==0: 
+        depth = 0
+    else:
+        depth = float(temblor['depth'])
+        
+    exist = om.get(value,depth )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,depth, entry)
+    else:
+        entry = me.getValue(exist)
+    addDepth2(value, temblor, depth)
+    om.put(map,float(temblor['mag']),value)
+    return map
+
+def addDepth2(value, temblor, depth):
+
+    newList = om.get(value, depth)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, depth, valor)
+    return value
+
+def updateMag(map, temblor):
+    
+    exist = om.get(map,float (temblor['mag']) )
+    if exist is None:
+        value = om.newMap(omaptype="RBT")
+        om.put(map,float(temblor['mag']), value)
+    else:
+        value = me.getValue(exist)
+    addMag(map, temblor,value)
+    return map
+
+
+def addMag(map,temblor, value):
+    
+    if (temblor['depth']) is None or len(temblor['depth'])==0: 
+        depth = 0
+    else:
+        depth = float(temblor['depth'])
+        
+    exist = om.get(value,depth )
+    if exist is None:
+        entry = newlist(temblor)
+        om.put(value,depth, entry)
+    else:
+        entry = me.getValue(exist)
+    addDepth2(value, temblor, depth)
+    om.put(map,float(temblor['mag']),value)
+    return map
+
+def addDepth2(value, temblor, depth):
+
+    newList = om.get(value, depth)
+    valor = me.getValue(newList)
+    lt.addLast(valor, temblor)
+    om.put(value, depth, valor)
+    return value
 
 def newData(temblor):
     entry = om.newMap(omaptype='RBT') 
@@ -439,20 +535,75 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     return totearthquakes, final, events
 
 
-def req_2(data_structs):
+def req_2(analyzer, initialmag, finalmag):
     """
-    Función que soluciona el requerimiento 2
+    Retorna el numero de crimenes en un rago de fechas.
     """
-    # TODO: Realizar el requerimiento 2
-    pass
+    final = lt.newList('ARRAY_LIST')
+    dic = {}
+    lst = om.values(analyzer, initialmag, finalmag)
+    totearthquakes = lt.size(lst)
+    
+    events = 0
+    for lstdate in lt.iterator(lst):
+        for j in lt.iterator(lstdate):
+            
+            mag = j['mag']
+            
+            
+            events += 1
+            dic[mag] = {
+                'mag':mag,
+                'events':1,
+                'details':j
+                
+            }
+            lt.addFirst(final,dic[mag])
+        
+    
+        
+    return totearthquakes, final, events
 
-
-def req_3(data_structs):
+def req_3(min_mag,max_depth,analyzer):
     """
     Función que soluciona el requerimiento 3
     """
-    # TODO: Realizar el requerimiento 3
-    pass
+    
+    final = lt.newList('ARRAY_LIST')
+    newLista = lt.newList('ARRAY_LIST')
+    hp = heap.newHeap(compare_dicts)
+    dic = {}
+    data_structs = analyzer['mag']
+    
+    x = om.values(data_structs,float(min_mag), float(om.maxKey(data_structs)))
+    
+    for i in lt.iterator(x):
+       
+        f = om.values(i,float(om.minKey(i)),float(max_depth))
+        for j in lt.iterator(f):
+            for z in lt.iterator(j):
+                if len(z['depth'])>0:
+                
+                 if float(z['depth'])>0: 
+                     lt.addFirst(newLista,z)
+                
+    sa.sort(newLista,compareReq3)
+    a = lt.subList(newLista,1,17)
+    for z in lt.iterator(a):
+        time = z['time']
+            
+            
+                
+        dic[time] = {
+            'time':time,
+            'events':1,
+            'details':z
+                
+             }
+        lt.addLast(final,dic[time])
+    return final
+
+
 
 
 
@@ -731,3 +882,34 @@ def compareDates3(tem1, tem2):
         return False
     elif date1 < date2:
         return True
+
+
+def compareReq3(tem1, tem2):
+    """
+    Compara dos fechas
+
+    """
+    date1 = tem1['time']
+    date2 = tem2['time']
+    
+    mag1 = tem1['mag']
+    mag2 = tem2['mag']
+
+    depth1 = tem1['depth']
+    depth2 = tem2['depth']
+
+
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    else:        
+        if mag1 <  mag2:
+            return False
+        elif mag1 > mag2:
+            return True
+        else:
+            if depth1 <  depth2:
+                return False
+            elif depth1 > depth2:
+                return True
