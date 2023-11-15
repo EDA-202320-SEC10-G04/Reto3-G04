@@ -340,10 +340,10 @@ if __name__ == "__main__":
             depth = input("Ingrese la profundidad máxima del evento (depth): ") 
               
             print("========================= Req No.3 Results ==================")
-            size, result , time= controller.req_3(mag, depth ,cont)
+            result , time= controller.req_3(mag, depth ,cont)
            
             print("Para calcular los 10 eventos por magnitud y profundidad, delta tiempo fue:", str(time))
-            print_annotations_over_a_period_of_time (size,result)
+            print_req_3(result)
             
         elif int(inputs) == 5:         
             print("========================== Req No. 4 Inputs ===============")

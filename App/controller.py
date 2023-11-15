@@ -125,11 +125,11 @@ def req_3(mag_min, depth_max,analyzer):
     
     start_time = get_time()
    
-    size, result = model.req_3(mag_min, depth_max, analyzer)
+    result = model.req_3(mag_min, depth_max, analyzer)
 
     end_time = get_time()
     deltatime = delta_time(end_time, start_time)
-    return size, result, deltatime
+    return result, deltatime
 
 
 def req_4(sig_min, gap_max,analyzer):

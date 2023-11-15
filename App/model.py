@@ -96,6 +96,7 @@ def addTemblor(analyzer, temblor):
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
     addYear(analyzer['year'], temblor)
+    updateMag(analyzer['mag'],temblor)
     return analyzer
 
 
