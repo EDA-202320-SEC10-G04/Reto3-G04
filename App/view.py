@@ -268,7 +268,7 @@ def print_req_5(control,deltatime,size):
     else:
         print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
-def print_req_6(control,deltatime,size, n,max):
+def print_req_6(control,deltatime,size, n,ax):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
@@ -288,6 +288,11 @@ def print_req_6(control,deltatime,size, n,max):
         ]
         if  size > 6:
             tabla = controller.sixdata(control)
+        
+        max_table = PrettyTable()
+        max_table.field_names = keys
+        max_table.horizontal_char = '-'
+        max_table.hrules =ALL
         temblor_table = PrettyTable()
         temblor_table.field_names = keys
         temblor_table.horizontal_char = '-'
@@ -300,11 +305,22 @@ def print_req_6(control,deltatime,size, n,max):
                        detail['sig'], detail['nst'], detail['title'], detail['cdi'],
                        detail['mmi'], detail['magType'], detail['type'], detail['code']])
             temblor_table.add_row([detail['time'],'1',detalle_table])
+        for a in lt.iterator(ax):
+            l_table = PrettyTable()  # Crear una tabla 
+            l_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
 
+            l_table.add_row([a['mag'], a['long'], a['lat'], a['depth'],
+                       a['sig'], a['nst'], a['title'], a['cdi'],
+                       a['mmi'], a['magType'], a['type'], a['code']])
+            max_table.add_row([a['time'],'1',l_table])
+            
             #
-
+        print('==================MAX EVENT===============')
+        print(max_table)
         # Imprimir la tabla de equipos clasificados
+        print('================EVENTS==========================')
         print(temblor_table)
+        
     else:
         print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
@@ -431,9 +447,9 @@ if __name__ == "__main__":
             n = int(input("Ingrese el número de los N eventos de magnitud más cercana a mostrar.: "))
             
             
-            answer,deltatime, max = controller.req_5(year,lat,lon,radio, cont['year'] )
+            answer,deltatime, ax = controller.req_5(year,lat,lon,radio, cont['year'] )
             size = lt.size(answer)
-            print_req_6(answer,deltatime,size, n,max)
+            print_req_6(answer,deltatime,size, n,ax)
 
         elif int(inputs) == 8:
             print("========================== Req No. 7 Inputs ===============")

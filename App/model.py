@@ -516,8 +516,8 @@ def req_5(year,lat,lon,radio, data_structs):
             lt.addLast(array,j)
             if a <float(j['mag']):
                 a =float(j['mag'])
-                max = j
-    lt.addLast(c,max)
+                ax = j
+    lt.addLast(c,ax)
     f = merg.sort(array,compareDates3)
     return f, c
 def req_6(depth,nst,analyzer):

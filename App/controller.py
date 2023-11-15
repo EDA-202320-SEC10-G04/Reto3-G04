@@ -145,10 +145,10 @@ def req_5(year,lat,lon,radio, data_structs):
     """
     # TODO: Modificar el requerimiento 6
     start_time = get_time()
-    answer, max = model.req_5(year,lat,lon,radio, data_structs)
+    answer, ax = model.req_5(year,lat,lon,radio, data_structs)
     end_time = get_time()
     deltatime = delta_time(end_time, start_time)
-    return answer,deltatime ,max
+    return answer,deltatime ,ax
 
 def req_6(depth,nst, analyzer):
     """
