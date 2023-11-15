@@ -231,12 +231,43 @@ def print_req_5(control,deltatime,size):
     else:
         print("No se encontro temblor especifico.")
     print("El tiempo fue de: ", deltatime)
-def print_req_6(control):
+def print_req_6(control,deltatime,size, n,max):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    print(f"Total de eventos : {size}")
+
+    if size> 0:
+        keys = [
+                'time',
+                'events',
+                'details'
+                
+
+        ]
+        if  size > 6:
+            tabla = controller.sixdata(control)
+        temblor_table = PrettyTable()
+        temblor_table.field_names = keys
+        temblor_table.horizontal_char = '-'
+        temblor_table.hrules =ALL
+        for detail in lt.iterator(tabla):
+            detalle_table = PrettyTable()  # Crear una tabla 
+            detalle_table.field_names = ['mag','long','lat','depth', 'sig', 'nst', 'title','cdi', 'mmi', 'magType', 'type','code'] 
+
+            detalle_table.add_row([detail['mag'], detail['long'], detail['lat'], detail['depth'],
+                       detail['sig'], detail['nst'], detail['title'], detail['cdi'],
+                       detail['mmi'], detail['magType'], detail['type'], detail['code']])
+            temblor_table.add_row([detail['time'],'1',detalle_table])
+
+            #
+
+        # Imprimir la tabla de equipos clasificados
+        print(temblor_table)
+    else:
+        print("No se encontro temblor especifico.")
+    print("El tiempo fue de: ", deltatime)
 
 
 def print_req_7(prop_list, bins, prop, title, year):
