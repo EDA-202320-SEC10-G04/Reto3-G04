@@ -168,12 +168,12 @@ def req_6(depth,nst, analyzer):
 
 def req_7(year, title, prop, bins, analyzer):
     start_time = get_time()
-    prop_list, prop_values = model.req_7_histogram(year, title, prop, bins, analyzer)
+    eventos_periodo, eventos_hist, mayor, menor, prop_values, lista = model.req_7_histogram(year, title, prop, bins, analyzer)
     end_time = get_time()
     
     deltatime = delta_time(start_time, end_time)
     
-    return prop_list, prop_values, deltatime
+    return eventos_periodo, eventos_hist, mayor, menor, prop_values, lista, deltatime
 
 
 def req_8(control):

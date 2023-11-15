@@ -276,14 +276,30 @@ def print_req_6(control):
     pass
 
 
-def print_req_7(prop_list, bins, prop, title, year):
-    plt.hist(prop_list, bins=bins)
+def print_req_7(eventos_periodo, eventos_hist,mayor, menor, prop_values, lista, bins, prop):
+    print(f'Total de eventos en la fecha: {eventos_periodo}')
+    print(f'Total de eventos en el histograma {eventos_hist}')
+    print(f'Propiedad menor del histograma {menor}')
+    print(f'Propiedad mayor del histograma {mayor}')
+    
+    plt.hist(prop_values, bins=int(bins), edgecolor='black', rwidth=0.8)
+
     plt.xlabel(f"{prop} Values")
     plt.ylabel("Number of Events")
-    plt.title(f"Histogram of {prop} for {title} in {year}")
-
-    # Mostrar el histograma
+    plt.title(f"Histogram of {prop}")
     plt.show()
+    if float(eventos_hist) > 0:
+        keys = ['time', 'lat', 'long', 'title', 'code', prop]
+
+        if float(eventos_hist) > 6:
+            # Aquí puedes implementar una función para mostrar solo los primeros 6 goles
+            lista = controller.sixdata(lista)
+
+        # Imprimir la tabla de goles
+        printSimpleTable(lista, keys)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
+
 
 
 def print_req_8(control):
@@ -396,10 +412,10 @@ if __name__ == "__main__":
             
               
             print("========================= Req No.7 Results ==================")
-            prop_list, prop_values, time= controller.req_7(year, title, prop, bins, cont)
+            eventos_periodo, eventos_hist, mayor, menor, prop_values, lista, deltatime= controller.req_7(year, title, prop, bins, cont)
            
-            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
-            print_req_7(prop_list, bins, prop, title, year)
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(deltatime))
+            print_req_7(eventos_periodo, eventos_hist, mayor, menor, prop_values, lista, bins, prop)
 
         elif int(inputs) == 9:
             print_req_8(control)

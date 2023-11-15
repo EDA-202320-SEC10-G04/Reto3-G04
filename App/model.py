@@ -100,8 +100,8 @@ def addTemblor(analyzer, temblor):
     lt.addLast(analyzer['temblores'], temblor)
     updateDateIndex(analyzer['dateIndex'], temblor)
     updateDepth(analyzer['depth'],temblor)
-
-    updateYear(analyzer['year'], temblor)
+    addYear(analyzer['year'], temblor)
+    updateYear(analyzer['years'], temblor)
 
     updateSig(analyzer['sig'],temblor)
     #updateYear(analyzer['years'],temblor)
@@ -109,19 +109,21 @@ def addTemblor(analyzer, temblor):
     return analyzer
 
 def updateYear(map, temblor):
-    
-    exist = om.get(map, (temblor['time'].date()) )
+    time = temblor['time']
+    temblortime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    exist = om.get(map, (temblortime.date()) )
     if exist is None:
         value = om.newMap(omaptype="RBT")
-        om.put(map,temblor['time'].date(), value)
+        om.put(map,temblortime.date(), value)
     else:
         value = me.getValue(exist)
-    addYear(map, temblor,value)
+    addYear1(map, temblor,value)
     return map
 
 
-def addYear(map,temblor, value):
-    
+def addYear1(map,temblor, value):
+    time = temblor['time']
+    temblortime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
     if (temblor['gap']) is None or len(temblor['title'])==0: 
         title = 'Unknown'
     else:
@@ -134,7 +136,7 @@ def addYear(map,temblor, value):
     else:
         entry = me.getValue(exist)
     addTitle(value, temblor, title)
-    om.put(map,(temblor['time'].date()),value)
+    om.put(map,(temblortime.date()),value)
     return map
 
 def addTitle(value, temblor, title):
@@ -195,9 +197,8 @@ def addDepth(map,temblor, value):
     return map
 
 def addNst(value, temblor, nst):
-    time = temblor['time']
-    temblorTime = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    temblor['time']= temblorTime
+    
+   
     newList = om.get(value, nst)
     valor = me.getValue(newList)
     lt.addLast(valor, temblor)
@@ -407,14 +408,14 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
-    f =analyzer['year']
-    detalles = lt.newList('ARRAY_LIST')
+    
+    
     final = lt.newList('ARRAY_LIST')
     dic = {}
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%dT%H:%M')
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%dT%H:%M') 
     lst = om.values(analyzer, initialDate, finalDate)
-    keys = om.keys(analyzer, initialDate, finalDate)
+    
     totearthquakes = lt.size(lst)
     
     events = 0
@@ -475,8 +476,8 @@ def req_4(sig,gap,analyzer):
                 if len(z['gap'])>0:
                 
                  if float(z['gap'])>0: 
-                     lt.addLast(newLista,z)
-    sa.sort(newLista,compareDates3)
+                     lt.addFirst(newLista,z)
+    sa.sort(newLista,compareDates2)
     
     a = lt.subList(newLista,1,17)
     for z in lt.iterator(a):
@@ -547,55 +548,39 @@ def req_6(depth,nst,analyzer):
 def req_7_histogram(year, title, prop, bins, analyzer):
     total_events = 0
     prop_values = lt.newList('ARRAY_LIST')
-
-    # Rangos
-    min_date = f"{year}-01-01"
-    max_date = f"{year}-12-31"
     
     
-    a = datetime.date.strftime(min_date, '%Y-%m-%d')
-    b = datetime.date.strftime(max_date, '%Y-%m-%d')
-    print(a)
+    year = me.getValue(m.get(analyzer['year'],int(year)))
+    lista = lt.newList('ARRAY_LIST')
     
-    # Variables para almacenar propiedades y fechas de eventos para el histograma
-    prop_list = []
-    date_list = []
+    prop_values2 = []
     
-
-    # Obtener los temblores del año
-    year_events = om.keys(analyzer['years'],a,b )
 
     # Iterar por las fechas
-    for date_key in lt.iterator(year_events):
-        date_data = me.getValue(m.get(analyzer['years'], date_key))
+    for date in lt.iterator(year):
+        
 
-        # Verificar si la región específica tiene eventos
-        if title in date_data:
-            region_events = me.getValue(m.get(date_data, title))
+       
+        if title in date['title']:
+            if date[prop] is not None:
+              lt.addLast(prop_values, date[prop])
+              lt.addLast(lista, date)
+    
+    sa.sort(prop_values, compare_prop)
+    sa.sort(lista, compareDates2)
+    for a in lt.iterator(prop_values):
+        prop_values2.append(a)
 
-            for event in lt.iterator(region_events):
-                if prop in event and event[prop] is not None:
-                    # Almacenar las propiedades para el histograma
-                    prop_list.append(event[prop])
-
-                    # Almacenar las fechas para los eventos con la propiedad especificada
-                    date_list.append(event['time'])
-                    lt.addLast(prop_values,event)
-                    
-                    total_events += 1
-
-    # Obtener los valores mínimo y máximo para el histograma
-    min_val = min(prop_list)
-    max_val = max(prop_list)
-    if min_val is None:
-        min_val = 0
-    if max_val is None:
-        max_val = 0
-
+    mayor = lt.firstElement(prop_values)
+    menor = lt.lastElement(prop_values)
 
     # Mostrar el resumen de eventos y rangos
-    return prop_list, prop_values
-
+    return lt.size(year), lt.size(lista), mayor, menor, prop_values2, lista
+def compare_prop(inf1,inf2):
+    if inf1>inf2:
+        return True
+    else: 
+        return False
 
 
 def req_8(data_structs):
@@ -648,7 +633,7 @@ def compareDates2(tem1, tem2):
                 return False
             elif nst1 > nst2:
                 return True
-def compareDates3(tem1, tem2):
+def compareDates2(tem1, tem2):
     """
     Compara dos fechas
 
