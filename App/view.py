@@ -275,14 +275,14 @@ def print_req_6(control,deltatime,size, n,max):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 6
+    # TODO: Imprimir el resultado del requerimiento 6 N  ,
     print(f"Total de eventos : {size}")
 
     if size> 0:
-        keys = [
+        keys = [   
                 'time',
                 'events',
-                'details'
+                'details'                          
                 
 
         ]

@@ -546,7 +546,7 @@ def req_6(depth,nst,analyzer):
 
 
 def req_7_histogram(year, title, prop, bins, analyzer):
-    total_events = 0
+    
     prop_values = lt.newList('ARRAY_LIST')
     
     
