@@ -372,12 +372,36 @@ def getDatesByRange(analyzer, initialDate, finalDate):
     return totearthquakes, final, events
 
 
-def req_2(data_structs):
+def req_2(analyzer, initialmag, finalmag):
     """
-    Función que soluciona el requerimiento 2
+    Retorna el numero de crimenes en un rago de fechas.
     """
-    # TODO: Realizar el requerimiento 2
-    pass
+    detalles = lt.newList('ARRAY_LIST')
+    final = lt.newList('ARRAY_LIST')
+    dic = {}
+    lst = om.values(analyzer, initialmag, finalmag)
+    keys = om.keys(analyzer, initialmag, finalmag)
+    totearthquakes = lt.size(lst)
+    
+    events = 0
+    for lstdate in lt.iterator(lst):
+        for j in lt.iterator(lstdate):
+            
+            time = j['time']
+            
+            
+            events += 1
+            dic[time] = {
+                'time':time,
+                'events':1,
+                'details':j
+                
+            }
+            lt.addFirst(final,dic[time])
+        
+    
+        
+    return totearthquakes, final, events
 
 def req_3(min_mag,max_depth,analyzer):
     """
